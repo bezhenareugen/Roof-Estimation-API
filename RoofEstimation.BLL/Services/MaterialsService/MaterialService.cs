@@ -50,7 +50,7 @@ public class MaterialService : IMaterialService
             { MaterialsType.SiliconFlexiseal, p => 2 } // Should be revised
         };
     
-    public static MaterialResult CalculateMaterials(List<MaterialEntity> materials, RoofInfoEntity roofInfo, PipeInfoEntity pipeInfo)
+    public MaterialResult CalculateMaterials(List<MaterialEntity> materials, RoofInfoEntity roofInfo, PipeInfoEntity pipeInfo)
     {
         materials.ForEach(x =>
         {

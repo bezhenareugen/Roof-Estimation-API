@@ -8,7 +8,7 @@ namespace RoofEstimation.BLL.Services.TearOffService;
 
 public class TearOffService : ITearOffService
 {
-    public static TearOffResult GetCalculatedTearOffs(List<TearOffEntity> tearOffs, RoofInfoEntity roofInfo)
+    public TearOffResult GetCalculatedTearOffs(List<TearOffEntity> tearOffs, RoofInfoEntity roofInfo)
     {
         tearOffs.ForEach(x =>
         {

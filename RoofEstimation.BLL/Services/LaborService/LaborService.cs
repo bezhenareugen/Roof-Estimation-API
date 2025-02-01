@@ -33,7 +33,7 @@ public class LaborService : ILaborService
             { InstallContractorLabor.AddForWoodmoor, _ => 0 }
         };
     
-    public static LaborCost GetCalculatedTearOffs(List<InstallLaborCostEntity> labors, RoofInfoEntity roofInfo)
+    public LaborCost GetCalculatedTearOffs(List<InstallLaborCostEntity> labors, RoofInfoEntity roofInfo)
     {
         var updatedLabors = labors.Select(l => new InstallLaborCostEntity
         {

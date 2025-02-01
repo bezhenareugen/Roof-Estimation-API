@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using RoofEstimation.Entities.Auth;
+using RoofEstimation.Entities.Gutters;
 using RoofEstimation.Entities.Labor;
 using RoofEstimation.Entities.Material;
+using RoofEstimation.Entities.PermitFees;
 using RoofEstimation.Entities.PipeInfo;
 using RoofEstimation.Entities.RoofInfo;
 using RoofEstimation.Entities.TearOff;
@@ -23,4 +25,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<InstallLaborCostEntity> InstallLaborCosts { get; set; }
     public DbSet<MaterialEntity> Materials { get; set; }
     public DbSet<TearOffEntity> TearOffs { get; set; }
+    public DbSet<GuttersEntity> Gutters { get; set; }
+    public DbSet<PermitFeesEntity> PermitFees { get; set; }
 }

@@ -6,6 +6,8 @@ namespace RoofEstimation.Entities.Auth;
 
 public class UserEntity : IdentityUser
 {
-    List<RoofInfoEntity>? RoofInfos { get; set; }
-    List<PipeInfoEntity>? PipeInfos { get; set; }
+    public RoofInfoEntity RoofInfo { get; set; }
+    public PipeInfoEntity PipeInfo { get; set; }
+    public bool Gutters { get; set; } = true;
+    public bool PermitFees { get; set; } = true;
 }

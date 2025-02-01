@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RoofEstimation.BLL.Services.EstimationService;
 using RoofEstimation.BLL.Services.LaborService;
+using RoofEstimation.BLL.Services.MaterialsService;
+using RoofEstimation.BLL.Services.TearOffService;
 using RoofEstimation.DAL;
 using RoofEstimation.Entities.Auth;
 using RoofEstimation.Models.Configs;
@@ -53,6 +56,9 @@ builder.Services.AddAuthentication(options =>
 
 //Services
 builder.Services.AddScoped<ILaborService, LaborService>();
+builder.Services.AddScoped<ITearOffService, TearOffService>();
+builder.Services.AddScoped<IMaterialService, MaterialService>();
+builder.Services.AddScoped<IEstimationService, EstimationService>();
 
 var app = builder.Build();
 

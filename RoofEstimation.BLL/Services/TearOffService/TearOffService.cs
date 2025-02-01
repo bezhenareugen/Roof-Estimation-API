@@ -1,5 +1,6 @@
 using RoofEstimation.Entities.RoofInfo;
 using RoofEstimation.Entities.TearOff;
+using RoofEstimation.Models.Constants;
 using RoofEstimation.Models.Enums;
 using RoofEstimation.Models.TearOff;
 
@@ -18,7 +19,7 @@ public class TearOffService : ITearOffService
 
         var total = decimal.Round(tearOffs.Sum(x => x.TearOffPrice), 2);
 
-        return new TearOffResult(tearOffs, Math.Max(total, 550)); // Ensuring minimal charge of 550
+        return new TearOffResult(tearOffs, Math.Max(total, Constants.MinimalCharge)); // Ensuring minimal charge of 550
     }
 
     private static int CalculateTearOffSquares(TearOff tearOff, RoofInfoEntity roofInfo)

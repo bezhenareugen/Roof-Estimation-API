@@ -1,4 +1,3 @@
-using System.Diagnostics.Contracts;
 using RoofEstimation.Entities.Labor;
 using RoofEstimation.Entities.RoofInfo;
 using RoofEstimation.Models.Enums;

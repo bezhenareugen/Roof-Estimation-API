@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\RoofEstimation.DAL\RoofEstimation.DAL.csproj" />
+      <ProjectReference Include="..\RoofEstimation.Entities\RoofEstimation.Entities.csproj" />
+      <ProjectReference Include="..\RoofEstimation.Models\RoofEstimation.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.3.1" />
+    </ItemGroup>
+
+</Project>

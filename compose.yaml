@@ -1,0 +1,6 @@
+﻿services:
+  roofestimation.api:
+    image: roofestimation.api
+    build:
+      context: .
+      dockerfile: RoofEstimation.Api/Dockerfile

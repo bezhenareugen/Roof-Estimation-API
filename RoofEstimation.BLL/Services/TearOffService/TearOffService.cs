@@ -18,6 +18,8 @@ public class TearOffService : ITearOffService
         });
 
         var total = decimal.Round(tearOffs.Sum(x => x.TearOffPrice), 2);
+        
+        var test = tearOffs.Select(x => x.TearOffPrice);
 
         return new TearOffResult(tearOffs, Math.Max(total, Constants.MinimalCharge)); // Ensuring minimal charge of 550
     }
@@ -28,19 +30,19 @@ public class TearOffService : ITearOffService
         {
             { TearOff.Layer4by12orTouchOn, c => IsPitchType(c, RoofPitchTypes.Type4by12) ? c.Squares : 0 },
             { TearOff.AdditionalLayer4by12, c => HasLayers(c, 2) && IsPitchType(c, RoofPitchTypes.Type4by12) ? c.Squares : 0 },
-            { TearOff.AdditionalLayer4by12Second, c => HasLayers(c, 3) && IsPitchType(c, RoofPitchTypes.Type4by12) ? c.Squares : 0 },
+            { TearOff.AdditionalLayer4by12Second, c => HasExactLayers(c, 3) && IsPitchType(c, RoofPitchTypes.Type4by12) ? c.Squares : 0 },
 
             { TearOff.Layer6by12, c => IsPitchType(c, RoofPitchTypes.Type6by23) ? c.Squares : 0 },
             { TearOff.AdditionalLayer6by12, c => HasLayers(c, 2) && IsPitchType(c, RoofPitchTypes.Type6by23) ? c.Squares : 0 },
-            { TearOff.AdditionalLayer6by12Second, c => HasLayers(c, 3) && IsPitchType(c, RoofPitchTypes.Type6by23) ? c.Squares : 0 },
+            { TearOff.AdditionalLayer6by12Second, c => HasExactLayers(c, 3) && IsPitchType(c, RoofPitchTypes.Type6by23) ? c.Squares : 0 },
 
             { TearOff.Layer7by12, c => IsPitchType(c, RoofPitchTypes.Type7by12) ? c.Squares : 0 },
             { TearOff.AdditionalLayer7by12, c => HasLayers(c, 2) && IsPitchType(c, RoofPitchTypes.Type7by12) ? c.Squares : 0 },
-            { TearOff.AdditionalLayer7by12Second, c => HasLayers(c, 3) && IsPitchType(c, RoofPitchTypes.Type7by12) ? c.Squares : 0 },
+            { TearOff.AdditionalLayer7by12Second, c => HasExactLayers(c, 3) && IsPitchType(c, RoofPitchTypes.Type7by12) ? c.Squares : 0 },
 
             { TearOff.Layer8by12, c => IsPitchType(c, RoofPitchTypes.Type8by12) ? c.Squares : 0 },
             { TearOff.AdditionalLayer8by12, c => HasLayers(c, 2) && IsPitchType(c, RoofPitchTypes.Type8by12) ? c.Squares : 0 },
-            { TearOff.AdditionalLayer8by12Second, c => HasLayers(c, 3) && IsPitchType(c, RoofPitchTypes.Type8by12) ? c.Squares : 0 },
+            { TearOff.AdditionalLayer8by12Second, c => HasExactLayers(c, 3) && IsPitchType(c, RoofPitchTypes.Type8by12) ? c.Squares : 0 },
 
             { TearOff.ExtraAmount, _ => 0 },  // Needs revision
             { TearOff.LowSlope, c => c.LowSlope },
@@ -64,5 +66,10 @@ public class TearOffService : ITearOffService
     private static bool HasLayers(RoofInfoEntity roofInfo, int minLayers)
     {
         return roofInfo.Layers >= minLayers;
+    }
+    
+    private static bool HasExactLayers(RoofInfoEntity roofInfo, int layers)
+    {
+        return roofInfo.Layers == layers;
     }
 }

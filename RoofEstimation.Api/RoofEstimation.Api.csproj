@@ -31,6 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\RoofEstimation.BLL\RoofEstimation.BLL.csproj" />
       <ProjectReference Include="..\RoofEstimation.DAL\RoofEstimation.DAL.csproj" />
       <ProjectReference Include="..\RoofEstimation.Entities\RoofEstimation.Entities.csproj" />
       <ProjectReference Include="..\RoofEstimation.Models\RoofEstimation.Models.csproj" />

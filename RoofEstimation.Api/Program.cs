@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using RoofEstimation.BLL.Services.LaborService;
 using RoofEstimation.DAL;
 using RoofEstimation.Entities.Auth;
 using RoofEstimation.Models.Configs;
@@ -49,6 +50,9 @@ builder.Services.AddAuthentication(options =>
         jwt.SaveToken = true;
         jwt.TokenValidationParameters = tokenValidationParams;
     });
+
+//Services
+builder.Services.AddScoped<ILaborService, LaborService>();
 
 var app = builder.Build();
 

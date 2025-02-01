@@ -15,4 +15,9 @@
       <ProjectReference Include="..\RoofEstimation.Entities\RoofEstimation.Entities.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Migrations\20250201124841_InitialCreate1.cs" />
+      <Compile Remove="Migrations\20250201124841_InitialCreate1.Designer.cs" />
+    </ItemGroup>
+
 </Project>

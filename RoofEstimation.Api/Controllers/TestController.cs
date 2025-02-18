@@ -12,6 +12,6 @@ public class TestController(ApplicationDbContext context) : ControllerBase
     public IActionResult Index()
     {    
         var test = context.Users.FirstOrDefault();
-        return Ok("Test successful");
+        return Ok(test);
     }
 }

@@ -1,5 +1,8 @@
 # Roof Estimation API
 
+![Build Status](https://github.com/bezhenareugen/roof-estimation-api/actions/workflows/roof-estimation-api.yml/badge.svg)
+
+
 ```
 INSERT INTO public."Materials" ("MaterialName", "MaterialPrice", "MaterialUnits", "CalcPrice", "MaterialType")
 VALUES

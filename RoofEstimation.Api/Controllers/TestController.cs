@@ -12,6 +12,6 @@ public class TestController(ApplicationDbContext context) : ControllerBase
     public IActionResult Index()
     {    
         var test = context.Users.FirstOrDefault();
-        return Ok("Roof Estimation Test Controller Works");
+        return Ok("WebHooks works");
     }
 }

@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Minio;
 using RoofEstimation.BLL.Services.EstimationService;
 using RoofEstimation.BLL.Services.LaborService;
 using RoofEstimation.BLL.Services.MaterialsService;
+using RoofEstimation.BLL.Services.MinioService;
 using RoofEstimation.BLL.Services.TearOffService;
 using RoofEstimation.DAL;
 using RoofEstimation.Entities.Auth;
@@ -54,11 +56,18 @@ builder.Services.AddAuthentication(options =>
         jwt.TokenValidationParameters = tokenValidationParams;
     });
 
+builder.Services.AddMinio(configureClient => configureClient
+    .WithEndpoint("205.209.102.27:9100")
+    .WithCredentials("roofestimationminiouser", "XhRVrSQ1Wk@3LSle")
+    .WithSSL(false)
+    .Build());
+
 //Services
 builder.Services.AddScoped<ILaborService, LaborService>();
 builder.Services.AddScoped<ITearOffService, TearOffService>();
 builder.Services.AddScoped<IMaterialService, MaterialService>();
 builder.Services.AddScoped<IEstimationService, EstimationService>();
+builder.Services.AddScoped<IMinioService, MinioService>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>

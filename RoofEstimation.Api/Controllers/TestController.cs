@@ -47,11 +47,14 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
     // }
     
     [HttpGet]
+    [Authorize]
     [Route("minio/download")]
     public async Task<IActionResult> GetObject(string bucketId, string objectName, CancellationToken ct)
     {
         var url = await minioService.GetPresignedUrl(bucketId, objectName, ct);
-        
-        return string.IsNullOrEmpty(url) ? NotFound() : Ok(url);
+
+        var response = await minioService.UploadEstimation(User);
+
+        return response ? Ok(url) : BadRequest("File not saved");
     }
 }

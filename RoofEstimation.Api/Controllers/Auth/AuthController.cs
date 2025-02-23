@@ -163,7 +163,7 @@ namespace RoofEstimation.Api.Controllers.Auth;
                     new Claim(JwtRegisteredClaimNames.Sub, userResponse.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 }),
-                Expires = DateTime.UtcNow.AddHours(6),
+                Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
@@ -177,7 +177,7 @@ namespace RoofEstimation.Api.Controllers.Auth;
                 IsRevoked = false,
                 UserId = userResponse.Id,
                 AddedDate = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMonths(6),
+                ExpiryDate = DateTime.UtcNow.AddDays(6),
                 Token = RandomString(35) + Guid.NewGuid(),
             };
 

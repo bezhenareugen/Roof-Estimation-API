@@ -79,13 +79,15 @@ public class MinioService(IMinioClientFactory minioClientFactory, UserManager<Us
      }
 
      public async Task<List<EstimationFile>> GetUserEstimationsAsync(ClaimsPrincipal user)
-     {
+     {    Console.WriteLine("Get users estimations");
           var userId = userManager.GetUserId(user!);
           var response = new List<EstimationFile>();
           var prefix = $"users/{userId}/";
           
+          
           try
           {
+               Console.WriteLine("Started estimations request to MiniO");
                var observable = _minioClient.ListObjectsEnumAsync(
                     new ListObjectsArgs()
                          .WithBucket("estimations")
@@ -95,6 +97,7 @@ public class MinioService(IMinioClientFactory minioClientFactory, UserManager<Us
 
                await foreach (var obj in observable)
                {
+                    Console.WriteLine($"Add Objects: {obj.Key}");
                     response.Add(new EstimationFile
                     {
                        FileName = obj.Key.Split("/", StringSplitOptions.RemoveEmptyEntries).Last(),
@@ -103,6 +106,7 @@ public class MinioService(IMinioClientFactory minioClientFactory, UserManager<Us
                        ModifiedOn = obj.LastModifiedDateTime
                     });
                }
+               Console.WriteLine($"End of estimations request to MiniO");
           }
           catch (Exception ex)
           {

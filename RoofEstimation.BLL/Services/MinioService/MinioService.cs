@@ -1,11 +1,14 @@
+using System.Reactive.Linq;
 using System.Security.Claims;
 using System.Text;
 using CommunityToolkit.HighPerformance;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Minio;
+using Minio.ApiEndpoints;
 using Minio.DataModel.Args;
 using RoofEstimation.Entities.Auth;
+using RoofEstimation.Models.Files;
 
 namespace RoofEstimation.BLL.Services.MinioService;
 
@@ -76,5 +79,40 @@ public class MinioService(IMinioClientFactory minioClientFactory, UserManager<Us
                Console.WriteLine($"[Bucket]  Exception: {e}");
                return false;
           }
+     }
+
+     public async Task<List<EstimationFile>> GetUserEstimationsAsync(ClaimsPrincipal user)
+     {
+          var userId = userManager.GetUserId(user!);
+          var objectList = new List<string>();
+          var response = new List<EstimationFile>();
+          var prefix = $"users/{userId}/";
+          
+          try
+          {
+               var observable = _minioClient.ListObjectsEnumAsync(
+                    new ListObjectsArgs()
+                         .WithBucket("estimations")
+                         .WithPrefix(prefix)
+                         .WithRecursive(true)
+               );
+
+               await foreach (var obj in observable)
+               {
+                    response.Add(new EstimationFile
+                    {
+                       FileName = obj.Key.Split("/", StringSplitOptions.RemoveEmptyEntries).Last(),
+                       FileSize = obj.Size.ToString(),
+                       ContentType = obj.ContentType,
+                       ModifiedOn = obj.LastModifiedDateTime
+                    });
+               }
+          }
+          catch (Exception ex)
+          {
+               Console.WriteLine($"Error listing objects: {ex.Message}");
+          }
+
+          return response;
      }
 }

@@ -1,11 +1,8 @@
-using System.Reactive.Linq;
 using System.Security.Claims;
 using System.Text;
 using CommunityToolkit.HighPerformance;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Minio;
-using Minio.ApiEndpoints;
 using Minio.DataModel.Args;
 using RoofEstimation.Entities.Auth;
 using RoofEstimation.Models.Files;

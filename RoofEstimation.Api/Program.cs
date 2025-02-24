@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(options =>
     });
 
 builder.Services.AddMinio(configureClient => configureClient
-    .WithEndpoint("minio:9100")
+    .WithEndpoint("minio:9000")
     .WithCredentials("roofestimationminiouser", "XhRVrSQ1Wk@3LSle")
     .WithSSL(false)
     .Build());

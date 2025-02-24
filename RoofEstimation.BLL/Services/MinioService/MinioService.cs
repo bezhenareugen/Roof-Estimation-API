@@ -81,7 +81,6 @@ public class MinioService(IMinioClientFactory minioClientFactory, UserManager<Us
      public async Task<List<EstimationFile>> GetUserEstimationsAsync(ClaimsPrincipal user)
      {
           var userId = userManager.GetUserId(user!);
-          var objectList = new List<string>();
           var response = new List<EstimationFile>();
           var prefix = $"users/{userId}/";
           

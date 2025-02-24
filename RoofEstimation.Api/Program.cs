@@ -99,8 +99,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 
-app.UseRouting();
 app.UseCors(MyAllowSpecificOrigins);
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();

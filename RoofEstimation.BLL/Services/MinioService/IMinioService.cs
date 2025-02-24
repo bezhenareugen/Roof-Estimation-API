@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using RoofEstimation.Models.Files;
 
 namespace RoofEstimation.BLL.Services.MinioService;
 
@@ -8,4 +9,5 @@ public interface IMinioService
         CancellationToken cancellationToken = default);
 
     Task<bool> UploadEstimation(ClaimsPrincipal user);
+    Task<List<EstimationFile>> GetUserEstimationsAsync(ClaimsPrincipal user);
 }

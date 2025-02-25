@@ -246,14 +246,14 @@ namespace RoofEstimation.Api.Controllers.Auth;
 
                 var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
 
-                if(expiryDate > DateTime.UtcNow) {
-                    return new AuthResultBase() {
-                        Success = false,
-                        Errors = new List<string>() {
-                            "Token has not yet expired"
-                        }
-                    };
-                }
+                // if(expiryDate > DateTime.UtcNow) {
+                //     return new AuthResultBase() {
+                //         Success = false,
+                //         Errors = new List<string>() {
+                //             "Token has not yet expired"
+                //         }
+                //     };
+                // }
 
                 // validation 4 - validate existence of the token
                 var storedToken = await context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
@@ -290,18 +290,18 @@ namespace RoofEstimation.Api.Controllers.Auth;
                     };
                 }
 
-                // Validation 7 - validate the id
-                var jti = tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
-
-                if(storedToken.JwtId != jti)
-                {
-                    return new AuthResultBase() {
-                        Success = false,
-                        Errors = new List<string>() {
-                            "Token doesn't match"
-                        }
-                    };
-                }
+                // // Validation 7 - validate the id
+                // var jti = tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+                //
+                // if(storedToken.JwtId != jti)
+                // {
+                //     return new AuthResultBase() {
+                //         Success = false,
+                //         Errors = new List<string>() {
+                //             "Token doesn't match"
+                //         }
+                //     };
+                // }
 
                 // update current token 
 

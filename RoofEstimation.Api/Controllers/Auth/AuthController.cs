@@ -228,23 +228,23 @@ namespace RoofEstimation.Api.Controllers.Auth;
 
             try
             {   
-                // Validation 1 - Validation JWT token format
-                var tokenInVerification = jwtTokenHandler.ValidateToken(tokenRequest.Token, tokenValidationParameters, out var validatedToken);
+                // // Validation 1 - Validation JWT token format
+                // var tokenInVerification = jwtTokenHandler.ValidateToken(tokenRequest.Token, tokenValidationParameters, out var validatedToken);
+                //
+                // // Validation 2 - Validate encryption alg
+                // if(validatedToken is JwtSecurityToken jwtSecurityToken)
+                // {
+                //     var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
+                //
+                //     if(result == false) {
+                //         return null;
+                //     }
+                // }
 
-                // Validation 2 - Validate encryption alg
-                if(validatedToken is JwtSecurityToken jwtSecurityToken)
-                {
-                    var result = jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase);
-
-                    if(result == false) {
-                        return null;
-                    }
-                }
-
-                // Validation 3 - validate expiry date
-                var utcExpiryDate = long.Parse(tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
-
-                var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
+                // // Validation 3 - validate expiry date
+                // var utcExpiryDate = long.Parse(tokenInVerification.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
+                //
+                // var expiryDate = UnixTimeStampToDateTime(utcExpiryDate);
 
                 // if(expiryDate > DateTime.UtcNow) {
                 //     return new AuthResultBase() {
@@ -346,7 +346,7 @@ namespace RoofEstimation.Api.Controllers.Auth;
         private string RandomString(int length)
         {
             var random = new Random();
-            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, length)
                 .Select(x => x[random.Next(x.Length)]).ToArray());
         }

@@ -8,6 +8,7 @@ using RoofEstimation.BLL.Services.EstimationService;
 using RoofEstimation.BLL.Services.LaborService;
 using RoofEstimation.BLL.Services.MaterialsService;
 using RoofEstimation.BLL.Services.MinioService;
+using RoofEstimation.BLL.Services.PdfService;
 using RoofEstimation.BLL.Services.TearOffService;
 using RoofEstimation.DAL;
 using RoofEstimation.Entities.Auth;
@@ -68,6 +69,7 @@ builder.Services.AddScoped<ITearOffService, TearOffService>();
 builder.Services.AddScoped<IMaterialService, MaterialService>();
 builder.Services.AddScoped<IEstimationService, EstimationService>();
 builder.Services.AddScoped<IMinioService, MinioService>();
+builder.Services.AddScoped<IPdfService, PdfService>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>

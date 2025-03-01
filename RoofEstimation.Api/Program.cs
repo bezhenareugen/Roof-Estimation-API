@@ -95,11 +95,11 @@ if (app.Environment.IsDevelopment())
             .WithTitle("Roof Estimation API")
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
+    
+    app.UseCors(MyAllowSpecificOrigins);
 }
 
 app.UseStaticFiles();
-
-app.UseCors(MyAllowSpecificOrigins);
 
 app.UseRouting();
 

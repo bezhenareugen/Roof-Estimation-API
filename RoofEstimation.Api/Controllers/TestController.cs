@@ -17,7 +17,7 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
     {    
         var test = context.Users.FirstOrDefault();
         
-        return Ok(test);
+        return Ok("WebHoos Works");
     }
     
     // [HttpGet]

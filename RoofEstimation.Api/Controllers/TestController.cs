@@ -5,12 +5,13 @@ using Minio.DataModel.Args;
 using RoofEstimation.DAL;
 using System.IO;
 using RoofEstimation.BLL.Services.MinioService;
+using RoofEstimation.BLL.Services.PdfService;
 
 namespace RoofEstimation.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TestController(ApplicationDbContext context, IMinioService minioService) : ControllerBase
+public class TestController(ApplicationDbContext context, IMinioService minioService, IPdfService pdfService) : ControllerBase
 {
     [HttpGet]
     public IActionResult Index()
@@ -46,6 +47,12 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
     //     //     throw;
     //     // }
     // }
+
+    [HttpGet("testPdf")]
+    public IActionResult GetTestPdf()
+    {
+        return File(pdfService.GeneratePdfAsync(), "application/pdf", "test.pdf");
+    }
     
     [HttpGet]
     [Authorize]

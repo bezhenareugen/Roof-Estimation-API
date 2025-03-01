@@ -96,7 +96,7 @@ if (app.Environment.IsDevelopment())
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
     
-    app.UseCors(MyAllowSpecificOrigins);
+    //app.UseCors(MyAllowSpecificOrigins);
 }
 
 app.UseStaticFiles();

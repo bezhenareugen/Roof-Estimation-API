@@ -1,6 +1,8 @@
+using QuestPDF.Companion;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
 
 namespace RoofEstimation.BLL.Services.PdfService;
 
@@ -9,26 +11,38 @@ public class PdfService : IPdfService
        public byte[] GeneratePdfAsync()
        {
               QuestPDF.Settings.License = LicenseType.Community; 
-              var pdf = Document.Create(container =>
+              Document.Create(container =>
               {
                      container.Page(page =>
                      {
                             page.Size(PageSizes.A4);
-                            page.Margin(2, Unit.Centimetre);
                             page.PageColor(Colors.White);
                             page.DefaultTextStyle(x => x.FontSize(20));
 
                             page.Header()
-                                   .Text("Hello PDF!")
-                                   .SemiBold().FontSize(36).FontColor(Colors.Blue.Medium);
-
-                            page.Content()
-                                   .PaddingVertical(1, Unit.Centimetre)
-                                   .Column(x =>
+                                   .Height(200)
+                                   .Background("#111928")
+                                   .PaddingHorizontal(2) // Ensuring space on both sides
+                                   .Row(row =>
                                    {
-                                          x.Spacing(20);
-                                          x.Item().Text(Placeholders.LoremIpsum());
-                                          x.Item().Image(Placeholders.Image(200, 100));
+                                          row.RelativeItem() // Left side (LIC Number)
+                                                 .AlignLeft()
+                                                 .Text("LIC #1007021")
+                                                 .FontColor(Colors.White)
+                                                 .FontSize(16)
+                                                 .SemiBold();
+
+                                          row.RelativeItem() // Right side (Company Details)
+                                                 .AlignRight()
+                                                 .Column(column =>
+                                                 {
+                                                        column.Item().Text("White River Roofing, Inc").FontSize(18).FontColor(Colors.White).SemiBold();
+                                                        column.Item().Text("1342 Ascote Ave").FontColor(Colors.White);
+                                                        column.Item().Text("Sacramento, CA 95673").FontColor(Colors.White);
+                                                        column.Item().Text("(916) 813-ROOF (7663)").FontColor(Colors.White);
+                                                        column.Item().Text("info@whiteriverroofing.com").FontColor(Colors.White);
+                                                        column.Item().Text("www.whiteriverroofing.com").FontColor(Colors.White);
+                                                 });
                                    });
 
                             page.Footer()
@@ -37,10 +51,12 @@ public class PdfService : IPdfService
                                    {
                                           x.Span("Page ");
                                           x.CurrentPageNumber();
+                                          x.Span(" of ");
+                                          x.TotalPages();
                                    });
                      });
-              }).GeneratePdf();
+              }).ShowInCompanion();
 
-              return pdf;
+              return Array.Empty<byte>();
        }
 }

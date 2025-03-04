@@ -335,6 +335,14 @@ namespace RoofEstimation.Api.Controllers.Auth;
             }    
         }
 
+        [HttpGet("validateEmail")]
+        public async Task<IActionResult> ValidateEmail([FromBody] ValidateEmailRequest request)
+        {
+            var emailExist = await context.Users.AnyAsync(x => x.Email == request.Email);
+            
+            return Ok(emailExist);
+        }
+
         private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
         {
             var dateTimeVal = new DateTime(1970, 1,1,0,0,0,0, DateTimeKind.Utc);

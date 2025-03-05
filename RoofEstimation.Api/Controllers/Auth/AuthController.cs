@@ -335,7 +335,7 @@ namespace RoofEstimation.Api.Controllers.Auth;
             }    
         }
 
-        [HttpGet("validateEmail")]
+        [HttpPost("validateEmail")]
         public async Task<IActionResult> ValidateEmail([FromBody] ValidateEmailRequest request)
         {
             var emailExist = await context.Users.AnyAsync(x => x.Email == request.Email);

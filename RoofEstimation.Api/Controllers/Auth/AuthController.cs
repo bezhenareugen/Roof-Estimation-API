@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RoofEstimation.BLL.Mappers.Auth;
 using RoofEstimation.DAL;
 using RoofEstimation.Entities.Auth;
+using RoofEstimation.Entities.Enums;
 using RoofEstimation.Models.Auth;
 using RoofEstimation.Models.Auth.Requests;
 using RoofEstimation.Models.Configs;
@@ -46,7 +48,7 @@ namespace RoofEstimation.Api.Controllers.Auth;
             var user = new UserReponse()
             {
                 Email = authUser.Email,
-                FullName = authUser.UserName,
+                FullName = $"{authUser.FirstName} {authUser.LastName}",
                 Roles = role,
             };
             return user;
@@ -54,40 +56,56 @@ namespace RoofEstimation.Api.Controllers.Auth;
         
         [HttpPost]
         [Route("Register")]
-        public async Task<IActionResult> Register([FromBody] UserRegistrationRequest user)
+        public async Task<IActionResult> Register([FromBody] UserRegistrationRequest userRegisterRequest)
         {
             if(ModelState.IsValid)
             {
-                var isAdminRoleExist = await roleManager.RoleExistsAsync("Admin");
-
-                if (!isAdminRoleExist)
+                var isCompanyRoleExistsAsync = await roleManager.RoleExistsAsync("Company");
+                
+                if (!isCompanyRoleExistsAsync)
                 {
                     var role = new IdentityRole
                     {
-                        Name = "Admin",
+                        Name = "Company",
+                    };
+                    
+                    await roleManager.CreateAsync(role);
+                }
+                
+                var isClientRoleExist = await roleManager.RoleExistsAsync("Client");
+                
+                if (!isClientRoleExist)
+                {
+                    var role = new IdentityRole
+                    {
+                        Name = "Client",
                     };
                     
                     await roleManager.CreateAsync(role);
                 }
                 
                 // We can utilise the model
-                var existingUser = await userManager.FindByEmailAsync(user.Email);
+                // var existingUser = await userManager.FindByEmailAsync(user.Email);
+                //
+                // if(existingUser != null)
+                // {
+                //     return BadRequest(new UserRegistrationResponse(){
+                //             Errors = new List<string>() {
+                //                 "Email already in use"
+                //             },
+                //             Success = false
+                //     });
+                // }
 
-                if(existingUser != null)
-                {
-                    return BadRequest(new UserRegistrationResponse(){
-                            Errors = new List<string>() {
-                                "Email already in use"
-                            },
-                            Success = false
-                    });
-                }
+                
+                
+                var userRole = userRegisterRequest.UserType == UserType.Client ? "Client" : "Company";
 
-                var newUser = new UserEntity() { Email = user.Email, UserName = user.UserName};
-                var isCreated = await userManager.CreateAsync(newUser, user.Password);
+                var newUser = UserRegisterReqToUserEntityMapper.MapToUserEntity(userRegisterRequest);
+                var isCreated = await userManager.CreateAsync(newUser, userRegisterRequest.Password);
                 if(isCreated.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(newUser ,"Admin");
+                    await userManager.AddToRoleAsync(newUser ,userRole);
                     var jwtToken = await GenerateJwtToken( newUser);
 
                    return Ok(jwtToken);
@@ -343,13 +361,13 @@ namespace RoofEstimation.Api.Controllers.Auth;
             return Ok(emailExist);
         }
 
-        private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
-        {
-            var dateTimeVal = new DateTime(1970, 1,1,0,0,0,0, DateTimeKind.Utc);
-            dateTimeVal = dateTimeVal.AddSeconds(unixTimeStamp).ToUniversalTime();
-
-            return dateTimeVal;
-        }
+        // private DateTime UnixTimeStampToDateTime(long unixTimeStamp)
+        // {
+        //     var dateTimeVal = new DateTime(1970, 1,1,0,0,0,0, DateTimeKind.Utc);
+        //     dateTimeVal = dateTimeVal.AddSeconds(unixTimeStamp).ToUniversalTime();
+        //
+        //     return dateTimeVal;
+        // }
 
         private string RandomString(int length)
         {

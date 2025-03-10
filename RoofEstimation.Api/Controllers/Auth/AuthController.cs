@@ -48,7 +48,8 @@ namespace RoofEstimation.Api.Controllers.Auth;
             var user = new UserReponse()
             {
                 Email = authUser.Email,
-                FullName = $"{authUser.FirstName} {authUser.LastName}",
+                FirstName = authUser.FirstName,
+                LastName = authUser.LastName,
                 Roles = role,
             };
             return user;

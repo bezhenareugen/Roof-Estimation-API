@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Minio;
+using RoofEstimation.BLL.Services.Auth;
 using RoofEstimation.BLL.Services.EstimationService;
 using RoofEstimation.BLL.Services.LaborService;
 using RoofEstimation.BLL.Services.MaterialsService;
@@ -64,6 +65,7 @@ builder.Services.AddMinio(configureClient => configureClient
     .Build());
 
 //Services
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILaborService, LaborService>();
 builder.Services.AddScoped<ITearOffService, TearOffService>();
 builder.Services.AddScoped<IMaterialService, MaterialService>();

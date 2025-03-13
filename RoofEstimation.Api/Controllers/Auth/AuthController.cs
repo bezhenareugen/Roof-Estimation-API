@@ -34,21 +34,18 @@ namespace RoofEstimation.Api.Controllers.Auth;
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequest userRegisterRequest)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await authService.RegisterAsync(userRegisterRequest);
-                if (result.Success)
+            if (!ModelState.IsValid)
+                return BadRequest(new UserRegistrationResponse
                 {
-                    return Ok(result);
-                }
-                return BadRequest(result);
-            }
-
-            return BadRequest(new UserRegistrationResponse
+                    Errors = new List<string> { "Invalid payload" },
+                    Success = false
+                });
+            var result = await authService.RegisterAsync(userRegisterRequest);
+            if (result.Success)
             {
-                Errors = new List<string> { "Invalid payload" },
-                Success = false
-            });
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpPost]
@@ -76,21 +73,18 @@ namespace RoofEstimation.Api.Controllers.Auth;
         [Route("RefreshToken")]
         public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenRequest tokenRequest)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await authService.RefreshTokenAsync(tokenRequest);
-                if (result.Success)
+            if (!ModelState.IsValid)
+                return BadRequest(new UserRegistrationResponse
                 {
-                    return Ok(result);
-                }
-                return BadRequest(result);
-            }
-
-            return BadRequest(new UserRegistrationResponse
+                    Errors = new List<string> { "Invalid payload" },
+                    Success = false
+                });
+            var result = await authService.RefreshTokenAsync(tokenRequest);
+            if (result.Success)
             {
-                Errors = new List<string> { "Invalid payload" },
-                Success = false
-            });
+                return Ok(result);
+            }
+            return BadRequest(result);
         }
 
         [HttpGet("validateEmail")]
@@ -98,5 +92,38 @@ namespace RoofEstimation.Api.Controllers.Auth;
         {
             var emailExist = await authService.ValidateEmailAsync(request.Email);
             return Ok(emailExist);
+        }
+        
+        [HttpPost]
+        [Route("RequestPasswordReset")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] RequestPasswordResetRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Errors = new List<string> { "Invalid payload" } });
+            }
+
+            var token = await authService.GeneratePasswordResetTokenAsync(request.Email);
+            // Here you would send the token via email to the user
+            
+            return token is not null ? Ok(new { ResetPasswordUrl = token }) : BadRequest("User not found");
+        }
+
+        [HttpPost]
+        [Route("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new { Errors = new List<string> { "Invalid payload" } });
+            }
+
+            var result = await authService.ResetPasswordAsync(request);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+
+            return BadRequest(result);
         }
     }

@@ -13,6 +13,7 @@ using RoofEstimation.Models.Auth;
 using RoofEstimation.Models.Auth.Requests;
 using RoofEstimation.Models.Configs;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
+using ResetPasswordRequest = RoofEstimation.Models.Auth.Requests.ResetPasswordRequest;
 
 namespace RoofEstimation.BLL.Services.Auth;
 
@@ -136,6 +137,51 @@ public class AuthService : IAuthService
 
             var dbUser = await _userManager.FindByIdAsync(storedToken.UserId);
             return await GenerateJwtToken(dbUser);
+        }
+        
+        public async Task<string?> GeneratePasswordResetTokenAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return null;
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var resetUrl = $"http://localhost:5173/reset-password?email={email}&token={token}";
+    
+            // Send the resetUrl via email to the user
+            // For example, using an email service
+
+            return resetUrl;
+        }
+
+        public async Task<AuthResultBase> ResetPasswordAsync(ResetPasswordRequest resetPasswordRequest)
+        {
+            var user = await _userManager.FindByEmailAsync(resetPasswordRequest.Email);
+            if (user == null)
+            {
+                return new AuthResultBase
+                {
+                    Success = false,
+                    Errors = new List<string> { "User not found" }
+                };
+            }
+
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordRequest.Token, resetPasswordRequest.NewPassword);
+            if (resetPassResult.Succeeded)
+            {
+                return new AuthResultBase
+                {
+                    Success = true
+                };
+            }
+
+            return new AuthResultBase
+            {
+                Success = false,
+                Errors = resetPassResult.Errors.Select(e => e.Description).ToList()
+            };
         }
 
         public async Task<bool> ValidateEmailAsync(string email)

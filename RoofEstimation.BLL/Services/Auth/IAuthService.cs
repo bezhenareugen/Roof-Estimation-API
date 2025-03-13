@@ -11,4 +11,6 @@ public interface IAuthService
     Task<AuthResultBase> LoginAsync(UserLoginRequest user);
     Task<AuthResultBase> RefreshTokenAsync(RefreshTokenRequest tokenRequest);
     Task<bool> ValidateEmailAsync(string email);
+    Task<AuthResultBase> ResetPasswordAsync(ResetPasswordRequest resetPasswordRequest);
+    Task<string?> GeneratePasswordResetTokenAsync(string email);
 }

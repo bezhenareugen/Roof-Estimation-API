@@ -148,17 +148,42 @@ public class AuthService : IAuthService
             }
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var resetUrl = $"http://localhost:5173/reset-password?email={email}&token={token}";
-    
-            // Send the resetUrl via email to the user
+
+            var payload = new
+            {
+                Email = email,
+                Token = token
+            };
+
+            var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
+            var jwtTokenHandler = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim("Email", payload.Email),
+                    new Claim("Token", payload.Token)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var jwtToken = jwtTokenHandler.CreateToken(tokenDescriptor);
+            var serializedToken = jwtTokenHandler.WriteToken(jwtToken);
+
+            // Send the serializedToken via email to the user
             // For example, using an email service
+
+            var resetUrl = $"http://localhost:5173/reset-password?token={serializedToken}";
 
             return resetUrl;
         }
 
         public async Task<AuthResultBase> ResetPasswordAsync(ResetPasswordRequest resetPasswordRequest)
-        {
-            var user = await _userManager.FindByEmailAsync(resetPasswordRequest.Email);
+        {   
+            var (email, token) = DecodeJwt(resetPasswordRequest.Token);
+            
+            var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return new AuthResultBase
@@ -168,7 +193,7 @@ public class AuthService : IAuthService
                 };
             }
 
-            var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordRequest.Token, resetPasswordRequest.NewPassword);
+            var resetPassResult = await _userManager.ResetPasswordAsync(user, token, resetPasswordRequest.NewPassword);
             if (resetPassResult.Succeeded)
             {
                 return new AuthResultBase
@@ -187,6 +212,17 @@ public class AuthService : IAuthService
         public async Task<bool> ValidateEmailAsync(string email)
         {
             return await _context.Users.AnyAsync(x => x.Email == email);
+        }
+        
+        private (string Email, string Token) DecodeJwt(string jwtToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtTokenObj = tokenHandler.ReadJwtToken(jwtToken);
+
+            var email = jwtTokenObj.Claims.First(claim => claim.Type == "Email").Value;
+            var token = jwtTokenObj.Claims.First(claim => claim.Type == "Token").Value;
+
+            return (email, token);
         }
 
         private async Task<AuthResultBase> GenerateJwtToken(UserEntity user)

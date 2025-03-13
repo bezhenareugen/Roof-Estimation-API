@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using RoofEstimation.Entities;
 using RoofEstimation.Entities.Auth;
 using RoofEstimation.Entities.Gutters;
 using RoofEstimation.Entities.Labor;
@@ -19,6 +20,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     }
     
     public DbSet<UserEntity> Users { get; set; }
+    public DbSet<OldPasswordEntity> OldPasswords { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<RoofInfoEntity> RoofInfos { get; set; }
     public DbSet<PipeInfoEntity> PipeInfos { get; set; }

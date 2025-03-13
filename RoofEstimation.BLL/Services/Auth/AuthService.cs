@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RoofEstimation.BLL.Mappers.Auth;
 using RoofEstimation.DAL;
+using RoofEstimation.Entities;
 using RoofEstimation.Entities.Auth;
 using RoofEstimation.Entities.Enums;
 using RoofEstimation.Models.Auth;
@@ -17,30 +18,20 @@ using ResetPasswordRequest = RoofEstimation.Models.Auth.Requests.ResetPasswordRe
 
 namespace RoofEstimation.BLL.Services.Auth;
 
-public class AuthService : IAuthService
-    {
-        private readonly UserManager<UserEntity> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly JwtConfig _jwtConfig;
-        private readonly ApplicationDbContext _context;
+public class AuthService(
+    UserManager<UserEntity> userManager,
+    RoleManager<IdentityRole> roleManager,
+    IOptionsMonitor<JwtConfig> optionsMonitor,
+    ApplicationDbContext context)
+    : IAuthService
+{
+    private readonly JwtConfig _jwtConfig = optionsMonitor.CurrentValue;
 
-        public AuthService(
-            UserManager<UserEntity> userManager,
-            RoleManager<IdentityRole> roleManager,
-            IOptionsMonitor<JwtConfig> optionsMonitor,
-            ApplicationDbContext context)
-        {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _jwtConfig = optionsMonitor.CurrentValue;
-            _context = context;
-        }
-
-        public async Task<UserReponse> GetUserAsync(ClaimsPrincipal user)
+    public async Task<UserReponse> GetUserAsync(ClaimsPrincipal user)
         {   
-            var userId  = _userManager.GetUserId(user);
-            var authUser = await _userManager.FindByEmailAsync(userId);
-            var role = await _userManager.GetRolesAsync(authUser);
+            var userId  = userManager.GetUserId(user);
+            var authUser = await userManager.FindByEmailAsync(userId);
+            var role = await userManager.GetRolesAsync(authUser);
 
             if (authUser == null)
             {
@@ -58,29 +49,41 @@ public class AuthService : IAuthService
 
         public async Task<AuthResultBase> RegisterAsync(UserRegistrationRequest userRegisterRequest)
         {
-            var isCompanyRoleExistsAsync = await _roleManager.RoleExistsAsync("Company");
+            var isCompanyRoleExistsAsync = await roleManager.RoleExistsAsync("Company");
 
             if (!isCompanyRoleExistsAsync)
             {
                 var role = new IdentityRole { Name = "Company" };
-                await _roleManager.CreateAsync(role);
+                await roleManager.CreateAsync(role);
             }
 
-            var isClientRoleExist = await _roleManager.RoleExistsAsync("Client");
+            var isClientRoleExist = await roleManager.RoleExistsAsync("Client");
 
             if (!isClientRoleExist)
             {
                 var role = new IdentityRole { Name = "Client" };
-                await _roleManager.CreateAsync(role);
+                await roleManager.CreateAsync(role);
             }
 
             var userRole = userRegisterRequest.UserType == UserType.Client ? "Client" : "Company";
             var newUser = UserRegisterReqToUserEntityMapper.MapToUserEntity(userRegisterRequest);
-            var isCreated = await _userManager.CreateAsync(newUser, userRegisterRequest.Password);
+            var isCreated = await userManager.CreateAsync(newUser, userRegisterRequest.Password);
 
             if (isCreated.Succeeded)
             {
-                await _userManager.AddToRoleAsync(newUser, userRole);
+                await userManager.AddToRoleAsync(newUser, userRole);
+                
+                // Store the password in the old passwords table
+                var oldPasswordEntity = new OldPasswordEntity
+                {
+                    UserId = newUser.Id,
+                    PasswordHash = userManager.PasswordHasher.HashPassword(newUser, userRegisterRequest.Password),
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                context.OldPasswords.Add(oldPasswordEntity);
+                await context.SaveChangesAsync();
+                
                 return await GenerateJwtToken(newUser);
             }
 
@@ -93,24 +96,24 @@ public class AuthService : IAuthService
 
         public async Task<AuthResultBase> LoginAsync(UserLoginRequest user)
         {
-            var existingUser = await _userManager.FindByEmailAsync(user.Email);
+            var existingUser = await userManager.FindByEmailAsync(user.Email);
 
             if (existingUser == null)
             {
                 return new AuthResultBase
                 {
-                    Errors = new List<string> { "User doesn't exist" },
+                    Errors = ["User doesn't exist"],
                     Success = false
                 };
             }
 
-            var isCorrect = await _userManager.CheckPasswordAsync(existingUser, user.Password);
+            var isCorrect = await userManager.CheckPasswordAsync(existingUser, user.Password);
 
             if (!isCorrect)
             {
                 return new AuthResultBase
                 {
-                    Errors = new List<string> { "Password is incorrect" },
+                    Errors = ["Password is incorrect"],
                     Success = false
                 };
             }
@@ -120,34 +123,34 @@ public class AuthService : IAuthService
 
         public async Task<AuthResultBase> RefreshTokenAsync(RefreshTokenRequest tokenRequest)
         {
-            var storedToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
+            var storedToken = await context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == tokenRequest.RefreshToken);
 
             if (storedToken == null || storedToken.IsUsed || storedToken.IsRevoked)
             {
                 return new AuthResultBase
                 {
                     Success = false,
-                    Errors = new List<string> { "Invalid token" }
+                    Errors = ["Invalid token"]
                 };
             }
 
             storedToken.IsUsed = true;
-            _context.RefreshTokens.Update(storedToken);
-            await _context.SaveChangesAsync();
+            context.RefreshTokens.Update(storedToken);
+            await context.SaveChangesAsync();
 
-            var dbUser = await _userManager.FindByIdAsync(storedToken.UserId);
+            var dbUser = await userManager.FindByIdAsync(storedToken.UserId);
             return await GenerateJwtToken(dbUser);
         }
         
         public async Task<string?> GeneratePasswordResetTokenAsync(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return null;
             }
 
-            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var token = await userManager.GeneratePasswordResetTokenAsync(user);
 
             var payload = new
             {
@@ -183,7 +186,7 @@ public class AuthService : IAuthService
         {   
             var (email, token) = DecodeJwt(resetPasswordRequest.Token);
             
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await userManager.FindByEmailAsync(email);
             if (user == null)
             {
                 return new AuthResultBase
@@ -192,29 +195,54 @@ public class AuthService : IAuthService
                     Errors = new List<string> { "User not found" }
                 };
             }
+            
+            // Check if the new password is one of the old passwords
+            var oldPasswords = await context.OldPasswords
+                .Where(op => op.UserId == user.Id)
+                .Select(op => op.PasswordHash)
+                .ToListAsync();
 
-            var resetPassResult = await _userManager.ResetPasswordAsync(user, token, resetPasswordRequest.NewPassword);
-            if (resetPassResult.Succeeded)
+            if (oldPasswords.Any(oldPassword => userManager.PasswordHasher.VerifyHashedPassword(user, oldPassword, resetPasswordRequest.NewPassword) == PasswordVerificationResult.Success))
             {
                 return new AuthResultBase
                 {
-                    Success = true
+                    Success = false,
+                    Errors = ["New password cannot be one of the old passwords"]
                 };
             }
 
+            var resetPassResult = await userManager.ResetPasswordAsync(user, token, resetPasswordRequest.NewPassword);
+            if (!resetPassResult.Succeeded)
+            {
+                return new AuthResultBase
+                {
+                    Success = false,
+                    Errors = resetPassResult.Errors.Select(e => e.Description).ToList()
+                };
+            }
+            
+            var oldPasswordEntity = new OldPasswordEntity
+            {
+                UserId = user.Id,
+                PasswordHash = userManager.PasswordHasher.HashPassword(user, resetPasswordRequest.NewPassword),
+                CreatedAt = DateTime.UtcNow
+            };
+            
+            context.OldPasswords.Add(oldPasswordEntity);
+            await context.SaveChangesAsync();
+                
             return new AuthResultBase
             {
-                Success = false,
-                Errors = resetPassResult.Errors.Select(e => e.Description).ToList()
+                Success = true
             };
         }
 
         public async Task<bool> ValidateEmailAsync(string email)
         {
-            return await _context.Users.AnyAsync(x => x.Email == email);
+            return await context.Users.AnyAsync(x => x.Email == email);
         }
         
-        private (string Email, string Token) DecodeJwt(string jwtToken)
+        private static (string Email, string Token) DecodeJwt(string jwtToken)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var jwtTokenObj = tokenHandler.ReadJwtToken(jwtToken);
@@ -232,13 +260,12 @@ public class AuthService : IAuthService
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
+                Subject = new ClaimsIdentity([
                     new Claim("Id", user.Id),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Email, user.Email!),
+                    new Claim(JwtRegisteredClaimNames.Sub, user.Email!),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                }),
+                ]),
                 Expires = DateTime.UtcNow.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -257,8 +284,8 @@ public class AuthService : IAuthService
                 Token = RandomString(35) + Guid.NewGuid(),
             };
 
-            await _context.RefreshTokens.AddAsync(refreshToken);
-            await _context.SaveChangesAsync();
+            await context.RefreshTokens.AddAsync(refreshToken);
+            await context.SaveChangesAsync();
 
             return new AuthResultBase
             {
@@ -268,7 +295,7 @@ public class AuthService : IAuthService
             };
         }
 
-        private string RandomString(int length)
+        private static string RandomString(int length)
         {
             var random = new Random();
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";

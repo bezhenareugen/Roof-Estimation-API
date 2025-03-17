@@ -14,6 +14,7 @@ public class UserEntity : IdentityUser
     public string City { get; set; }
     public string State { get; set; }
     public int Zip { get; set; }
+    public List<AdditionalAddressEntity>? AdditionalAddresses { get; set; } = [];
     public string? CompanyName { get; set; }
     public string? LicenseNumber { get; set; }
     public UserType UserType { get; set; }

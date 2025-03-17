@@ -20,6 +20,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     }
     
     public override DbSet<UserEntity> Users { get; set; }
+    public DbSet<AdditionalAddressEntity> AdditionalAddressEntities { get; set; }
     public DbSet<OldPasswordEntity> OldPasswords { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<RoofInfoEntity> RoofInfos { get; set; }

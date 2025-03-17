@@ -12,11 +12,14 @@ public class UserEntityToUserResponseMapper
              Email = entity.Email,
              FirstName = entity.FirstName,
              LastName = entity.LastName,
-             PhoneNumber = entity.PhoneNumber,
-             Address = entity.Address,
-             City = entity.City,
-             State = entity.State,
-             Zip = entity.Zip,
+             Address = new UserAddress
+             {
+                PhoneNumber = entity.PhoneNumber,
+                Address = entity.Address,
+                City = entity.City,
+                State = entity.State,
+                Zip = entity.Zip,
+             }
          };
      }
 }

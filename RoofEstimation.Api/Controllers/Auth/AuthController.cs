@@ -18,7 +18,7 @@ using RoofEstimation.Models.Configs;
 
 namespace RoofEstimation.Api.Controllers.Auth;
 
-[ApiController]
+    [ApiController]
     [Route("api/[controller]")]
     public class AuthController(IAuthService authService) : ControllerBase
     {

@@ -19,7 +19,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         base.OnModelCreating(modelBuilder);
     }
     
-    public DbSet<UserEntity> Users { get; set; }
+    public override DbSet<UserEntity> Users { get; set; }
     public DbSet<OldPasswordEntity> OldPasswords { get; set; }
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<RoofInfoEntity> RoofInfos { get; set; }

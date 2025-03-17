@@ -25,7 +25,7 @@ namespace RoofEstimation.Api.Controllers.Auth;
         [HttpGet]
         [Route("User")]
         [Authorize]
-        public async Task<UserReponse> GetUser()
+        public async Task<UserResponse> GetUser()
         {
             return await authService.GetUserAsync(User);
         }

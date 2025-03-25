@@ -1,4 +1,5 @@
-using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using RoofEstimation.BLL.Services.LaborService;
 using RoofEstimation.BLL.Services.MaterialsService;
 using RoofEstimation.BLL.Services.TearOffService;
@@ -13,23 +14,42 @@ using RoofEstimation.Models.TearOff;
 namespace RoofEstimation.BLL.Services.EstimationService;
 
 public class EstimationService(
+    UserManager<UserEntity> userManager,
     ApplicationDbContext context,
     IMaterialService materialService,
     ITearOffService tearOffsService,
     ILaborService laborService)
     : IEstimationService
 {
-    public Estimation CalculateTotal(string id)
+    public async Task<Estimation> CalculateTotal(ClaimsPrincipal authUser, EstimateRequest estimateRequest)
     {
-        var user = context.Users
-            .Include(userEntity => userEntity.RoofInfo)
-            .Include(userEntity => userEntity.PipeInfo)
-            .SingleOrDefaultAsync(u => u.Id == id).Result
-                   ?? throw new Exception("Client not found");;
+        var userId  = userManager.GetUserId(authUser);
+        var user = await userManager.FindByEmailAsync(userId);
+
+        if (user == null)
+        {
+            throw new Exception("User not found for estimation...");
+        }
+
+        if (estimateRequest.AdditionalAddress != null)
+        {
+            user.AdditionalAddresses?.Add(estimateRequest.AdditionalAddress);
+        }
+
+        user.RoofInfo = estimateRequest.RoofInfo;
+        user.PipeInfo = estimateRequest.PipesInfo;
+        
+        context.Users.Update(user); // check if this is correct and performance
+        
+        // var user = context.Users
+        //     .Include(userEntity => userEntity.RoofInfo)
+        //     .Include(userEntity => userEntity.PipeInfo)
+        //     .SingleOrDefaultAsync(u => u.Id == id).Result
+        //            ?? throw new Exception("Client not found");
 
         // client.IsApprovedByClient = false;
         // context.Update(client);
-        // context.SaveChanges();
+         await context.SaveChangesAsync();
 
         var guttersTotal = CalculateGuttersTotal(user);
 
@@ -71,7 +91,7 @@ public class EstimationService(
     private decimal CalculateGuttersTotal(UserEntity user)
     {
         var gutterFeet = context.Gutters.First();
-        gutterFeet.Units = user.RoofInfo.GutterLF;
+        gutterFeet.Units = user.RoofInfo!.GutterLF;
 
         var downSpots = context.Gutters.OrderByDescending(x => x.Id).First();
         downSpots.Units = user.RoofInfo.DownSpots;
@@ -85,7 +105,7 @@ public class EstimationService(
     {
         return tear.TearOffWithPrices.Sum(x => x.MyProfit) +
                labor.LaborCosts.Sum(x => x.MyProfit) +
-               context.Gutters.Sum(x => x.MyProfit);
+               context.Gutters.ToList().Sum(x => x.MyProfit);
     }
 
     private static (decimal woodcrestMaterial, decimal woodmoorMaterial, decimal durationMaterial) 
@@ -109,14 +129,14 @@ public class EstimationService(
     }
 
     private static (decimal duration, decimal woodcrest, decimal woodmoor) 
-        CalculateLaborCosts(UserEntity user, LaborCost labor, decimal durationMaterial)
+        CalculateLaborCosts(UserEntity user, LaborCost labor, decimal durationMaterial) // check about duration material
     {
         var duration = labor.LaborCosts
             .Where(x => x.LaborType != InstallContractorLabor.AddForWoodcrest &&
                         x.LaborType != InstallContractorLabor.AddForWoodmoor)
             .Sum(x => x.LaborPrice);
 
-        var woodcrest = duration + user.RoofInfo.Squares *
+        var woodcrest = duration + user.RoofInfo!.Squares *
                         (labor.LaborCosts.FirstOrDefault(x => x.LaborType == InstallContractorLabor.AddForWoodcrest)?.Price ?? 0);
 
         var woodmoor = duration + user.RoofInfo.Squares *

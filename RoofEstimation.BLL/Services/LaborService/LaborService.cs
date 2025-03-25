@@ -20,7 +20,7 @@ public class LaborService : ILaborService
             { InstallContractorLabor.Skylights, c => c.SkyLights },
             { InstallContractorLabor.SatelliteDishes, c => c.Dishes },
             { InstallContractorLabor.Vallesyes, c => CalculateCeilingDivided(c.ValleysLF, 9) },
-            { InstallContractorLabor.RidgeVentRoll9, c => c.VentsRidge ? CalculateCeilingDivided(c.VentsLF, 20) : 0 },
+            { InstallContractorLabor.RidgeVentRoll9, c => c.VentsRidge.HasValue && c.VentsRidge.Value ? CalculateCeilingDivided(c.VentsLF, 20) : 0 },
             { InstallContractorLabor.DecoRidge10, c => c.RidgeLF / 20m },
             { InstallContractorLabor.LowProfileVent, c => c.Vents },
             { InstallContractorLabor.PlyWoodCDXOSB, CalculatePlywood },
@@ -65,5 +65,5 @@ public class LaborService : ILaborService
         Math.Ceiling(value / divisor);
 
     private static decimal CalculatePlywood(RoofInfoEntity roofInfo) => 
-        roofInfo.PlyWood ? (roofInfo.Squares * 3) * 1.05m : 0;
+        roofInfo.PlyWood.HasValue && roofInfo.PlyWood.Value ? (roofInfo.Squares * 3) * 1.05m : 0;
 }

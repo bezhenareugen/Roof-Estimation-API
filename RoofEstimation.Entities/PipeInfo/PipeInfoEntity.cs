@@ -19,7 +19,7 @@ public class PipeInfoEntity
     public int RoofToWalls { get; set; }
     public int PeelAndStickBase { get; set; }
     public int PeelAndStickCap { get; set; }
-    public bool Nails34 { get; set; }
+    public bool? Nails34 { get; set; } = false;
     public int Nails14 { get; set; }
     public int SiliconFlexiseal { get; set; }
     public int TackerStaples { get; set; }

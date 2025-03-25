@@ -19,15 +19,15 @@ public class MaterialService : IMaterialService
             { MaterialsType.SafeGuard, r => r.Squares / 4.5m },
             { MaterialsType.Felt30lb, r => Math.Ceiling(r.ValleysLF / 9m) / 3m },
             { MaterialsType.Valley, r => Math.Ceiling(r.ValleysLF / 9m) },
-            { MaterialsType.RidgeVentRoll, r => r.VentsRidge ? Math.Ceiling(r.VentsLF / 20m) : 0 },
+            { MaterialsType.RidgeVentRoll, r => r.VentsRidge.HasValue && r.VentsRidge.Value ? Math.Ceiling(r.VentsLF / 20m) : 0 },
             { MaterialsType.OCLowProfile, r => r.Vents },
             { MaterialsType.StepFlashing, r => r.StepFlashingLF / 50m },
             { MaterialsType.PeelAndStickBase, r => Math.Ceiling(r.LowSlope / 2m) },
             { MaterialsType.PeelAndStickCap, r => r.LowSlope },
             { MaterialsType.Nails1by4, r => r.Squares / 20m },
             { MaterialsType.TackerStaples, r => r.Squares / 25m },
-            { MaterialsType.PlyWood7by16OSB, r => r.PlyWood ? (r.Squares * 3) * 1.05m : 0 },
-            { MaterialsType.StaplesN1911by2, r => r.PlyWood && (r.Squares * 3) * 1.05m > 1 ? 1 : 0 }
+            { MaterialsType.PlyWood7by16OSB, r => r.PlyWood.HasValue && r.PlyWood.Value ? (r.Squares * 3) * 1.05m : 0 },
+            { MaterialsType.StaplesN1911by2, r => r.PlyWood.HasValue && r.PlyWood.Value && (r.Squares * 3) * 1.05m > 1 ? 1 : 0 }
         };
 
     private static readonly Dictionary<MaterialsType, Func<PipeInfoEntity, decimal>> PipeCalculations =
@@ -46,7 +46,7 @@ public class MaterialService : IMaterialService
             { MaterialsType.OvalHorizontal, p => p.OvalHorizontal },
             { MaterialsType.PipesOther, p => p.PipesOther },
             { MaterialsType.RoofToWalls, p => p.RoofToWalls },
-            { MaterialsType.Nails3by4, p => p.Nails34 ? 1 : 0 },
+            { MaterialsType.Nails3by4, p => p.Nails34.HasValue && p.Nails34.Value ? 1 : 0 },
             { MaterialsType.SiliconFlexiseal, p => 2 } // Should be revised
         };
     
@@ -63,8 +63,6 @@ public class MaterialService : IMaterialService
 
         return new MaterialResult(materials, preTotal, tax, preTotal + tax);
     }
-
-    
 
     private static decimal CalculateUnits(MaterialsType materialType, RoofInfoEntity roofInfo, PipeInfoEntity pipeInfo)
     {

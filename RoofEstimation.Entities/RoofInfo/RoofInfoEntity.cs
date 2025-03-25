@@ -17,9 +17,9 @@ public class RoofInfoEntity
     public int Vents { get; set; }
     public int VentsLF { get; set; }
     public bool VentsCutIn { get; set; }
-    public bool VentsRidge { get; set; }
+    public bool? VentsRidge { get; set; } = false;
     public int StepFlashing { get; set; }
-    public bool PlyWood { get; set; }
+    public bool? PlyWood { get; set; } = false;
     public int RoofSlope { get; set; }
     public int Stories { get; set; }
     public int Layers { get; set; }

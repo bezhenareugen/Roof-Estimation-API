@@ -20,8 +20,4 @@
       <Compile Remove="Migrations\20250201124841_InitialCreate1.Designer.cs" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Repositories\" />
-    </ItemGroup>
-
 </Project>

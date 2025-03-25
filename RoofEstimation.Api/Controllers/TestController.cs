@@ -15,9 +15,24 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
 {
     [HttpGet]
     public IActionResult Index()
-    {    
+    {
         var test = context.Users.FirstOrDefault();
-        
+
+        try
+        {
+            var t = context.TearOffs.ToList();
+            if (t != null)
+            {
+               
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Exception: {e.Message}");
+            Console.WriteLine($"Stack Trace: {e.StackTrace}");
+            throw;
+        }
+
         return Ok("WebHoos Works");
     }
     

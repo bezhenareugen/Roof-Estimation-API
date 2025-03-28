@@ -48,6 +48,22 @@ public class AdminController(UserManager<UserEntity> userManager, ApplicationDbC
 
         return Ok(users);
     }
+
+    [HttpGet("searchUser")]
+    public async Task<IActionResult> SearchUser([FromQuery] string search)
+    {
+        var users = await applicationDbContext.Users
+            .Where(u => u.FirstName.Contains(search) ||
+                        u.LastName.Contains(search) ||
+                        u.Address.Contains(search) ||
+                        u.City.Contains(search) ||
+                        u.State.Contains(search) ||
+                        u.Zip.ToString().Contains(search) ||
+                        u.RegisteredDateTime.ToString().Contains(search))
+            .ToListAsync();
+
+        return Ok(users);
+    }
 }
 
 public class ChangeRoleRequest

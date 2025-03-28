@@ -34,12 +34,12 @@ public class AdminController(UserManager<UserEntity> userManager, ApplicationDbC
         switch (userType)
         {
             case "all":
-                users = await applicationDbContext.Users.ToListAsync();
+                users = await applicationDbContext.Users.Where(x => !x.IsBlocked).ToListAsync();
                 break;
             case "admin":
             {
                 var adminUsers = await userManager.GetUsersInRoleAsync("Admin");
-                users = adminUsers.ToList();
+                users = adminUsers.Where(x => !x.IsBlocked).ToList();
                 break;
             }
             case "blocked":

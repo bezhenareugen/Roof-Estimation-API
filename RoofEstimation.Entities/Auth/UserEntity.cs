@@ -24,5 +24,5 @@ public class UserEntity : IdentityUser
     public PipeInfoEntity? PipeInfo { get; set; }
     public bool Gutters { get; set; } = true;
     public bool PermitFees { get; set; } = true;
-    
+    public bool IsBlocked { get; set; } = false;
 }

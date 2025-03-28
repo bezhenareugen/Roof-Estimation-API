@@ -82,6 +82,20 @@ public class AdminController(UserManager<UserEntity> userManager, ApplicationDbC
 
         return Ok();
     }
+    
+    [HttpPost("unblockUser")]
+    public async Task<IActionResult> UnblockUser([FromBody] BlockUserRequest blockUserRequest)
+    {
+        var userExist = applicationDbContext.Users
+            .FirstOrDefaultAsync(u => u.NormalizedEmail == blockUserRequest.Email.ToUpper()).Result;
+
+        if (userExist is null) return BadRequest("User not found");
+        
+        userExist.IsBlocked = false;
+        await applicationDbContext.SaveChangesAsync();
+
+        return Ok();
+    }
 }
 
 public class ChangeRoleRequest

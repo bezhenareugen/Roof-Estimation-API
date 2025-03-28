@@ -88,11 +88,11 @@ public class AuthService(
     {
         var existingUser = await userManager.FindByEmailAsync(user.Email);
 
-        if (existingUser == null)
+        if (existingUser == null || existingUser.IsBlocked)
         {
             return new AuthResultBase
             {
-                Errors = ["User doesn't exist"],
+                Errors = ["User doesn't exist, or blocked"],
                 Success = false
             };
         }

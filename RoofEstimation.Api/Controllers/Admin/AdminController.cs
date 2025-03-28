@@ -6,7 +6,7 @@ using RoofEstimation.DAL;
 using RoofEstimation.Entities.Auth;
 
 namespace RoofEstimation.Api.Controllers.Admin;
-[Authorize("Admin")]
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class AdminController(UserManager<UserEntity> userManager, ApplicationDbContext applicationDbContext) : ControllerBase

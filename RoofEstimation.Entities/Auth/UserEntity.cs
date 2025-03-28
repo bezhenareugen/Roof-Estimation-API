@@ -25,4 +25,5 @@ public class UserEntity : IdentityUser
     public bool Gutters { get; set; } = true;
     public bool PermitFees { get; set; } = true;
     public bool IsBlocked { get; set; } = false;
+    public DateTime RegisteredDateTime { get; set; }
 }

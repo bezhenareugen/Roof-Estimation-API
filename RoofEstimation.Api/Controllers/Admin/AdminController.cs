@@ -6,10 +6,11 @@ using RoofEstimation.DAL;
 using RoofEstimation.Entities.Auth;
 
 namespace RoofEstimation.Api.Controllers.Admin;
-[Authorize(Roles = "Admin")]
+
 [ApiController]
 [Route("api/[controller]")]
-public class AdminController(UserManager<UserEntity> userManager, ApplicationDbContext applicationDbContext) : ControllerBase
+[Authorize(Roles = "Admin")]
+public class AdminController(UserManager<UserEntity> userManager, ApplicationDbContext applicationDbContext) : Controller
 {
     [HttpPost("chnageRole")]
     public async Task<IActionResult> ChangeRoleAsync([FromBody] ChangeRoleRequest changeRoleRequest)

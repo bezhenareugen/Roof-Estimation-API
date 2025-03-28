@@ -54,15 +54,8 @@ public class AuthService(
             await roleManager.CreateAsync(role);
         }
 
-        var isClientRoleExist = await roleManager.RoleExistsAsync("Client");
-
-        if (!isClientRoleExist)
-        {
-            var role = new IdentityRole { Name = "Client" };
-            await roleManager.CreateAsync(role);
-        }
-
-        var userRole = userRegisterRequest.UserType == UserType.Client ? "Client" : "Company";
+        //var userRole = userRegisterRequest.UserType == UserType.Client ? "Client" : "Company";
+        var userRole = "Admin";
         var newUser = UserRegisterReqToUserEntityMapper.MapToUserEntity(userRegisterRequest);
         var isCreated = await userManager.CreateAsync(newUser, userRegisterRequest.Password);
 
@@ -255,14 +248,18 @@ public class AuthService(
         var jwtTokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
 
+        var roles = await userManager.GetRolesAsync(user);
+        var roleClaims = roles.Select(role => new Claim(ClaimTypes.Role, role)).ToList();
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity([
+            Subject = new ClaimsIdentity(new[]
+            {
                 new Claim("Id", user.Id),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            ]),
+            }.Concat(roleClaims)),
             Expires = DateTime.UtcNow.AddMinutes(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };

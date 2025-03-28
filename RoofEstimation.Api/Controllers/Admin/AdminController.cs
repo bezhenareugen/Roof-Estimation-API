@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoofEstimation.DAL;
+using RoofEstimation.Entities.Admin;
 using RoofEstimation.Entities.Auth;
 
 namespace RoofEstimation.Api.Controllers.Admin;
@@ -66,6 +67,20 @@ public class AdminController(UserManager<UserEntity> userManager, ApplicationDbC
             .ToListAsync();
 
         return Ok(users);
+    }
+    
+    [HttpPost("blockUser")]
+    public async Task<IActionResult> BlockUser([FromBody] BlockUserRequest blockUserRequest)
+    {
+        var userExist = applicationDbContext.Users
+            .FirstOrDefaultAsync(u => u.NormalizedEmail == blockUserRequest.Email.ToUpper()).Result;
+
+        if (userExist is null) return BadRequest("User not found");
+        
+        userExist.IsBlocked = true;
+        await applicationDbContext.SaveChangesAsync();
+
+        return Ok();
     }
 }
 

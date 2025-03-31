@@ -1,3 +1,5 @@
+using RoofEstimation.Entities.Enums.Auth;
+
 namespace RoofEstimation.Models.Auth;
 
 public class UserResponse
@@ -7,6 +9,9 @@ public class UserResponse
     public string Email { get; set; }
     public UserAddress Address { get; set; }
     public IList<string> Roles { get; set; }
+    public string? CompanyName { get; set; }
+    public CompanyType? CompanyType { get; set; }
+    public string? LicenseNumber { get; set; }
 }
 
 public class UserAddress

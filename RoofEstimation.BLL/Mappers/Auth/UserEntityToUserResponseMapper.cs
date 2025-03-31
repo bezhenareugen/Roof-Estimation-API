@@ -19,7 +19,10 @@ public class UserEntityToUserResponseMapper
                 City = entity.City,
                 State = entity.State,
                 Zip = entity.Zip,
-             }
+             },
+             CompanyType = entity.CompanyType,
+             CompanyName = entity.CompanyName,
+             LicenseNumber = entity.LicenseNumber,
          };
      }
 }

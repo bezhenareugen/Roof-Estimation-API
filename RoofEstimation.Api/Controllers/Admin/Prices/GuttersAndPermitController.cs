@@ -9,7 +9,7 @@ namespace RoofEstimation.Api.Controllers.Admin.Prices;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = "Admin")]
-public class GuttersController(ApplicationDbContext context) : ControllerBase
+public class GuttersAndPermitController(ApplicationDbContext context) : ControllerBase
 {
    [HttpGet("getGutters")]
    public async Task<IActionResult> GetGutters()
@@ -31,6 +31,31 @@ public class GuttersController(ApplicationDbContext context) : ControllerBase
 
       gutterToUpdate.Price= gutter.Price;
       context.Gutters.Update(gutterToUpdate);
+      await context.SaveChangesAsync();
+      
+      return Ok(new { Success = true });
+   }
+   
+   [HttpGet("getPermits")]
+   public async Task<IActionResult> GetPermits()
+   {
+      var permits = await context.PermitFees.ToListAsync();
+
+      return Ok(permits);
+   }
+   
+   [HttpPatch("updatePermitPrice")]
+   public async Task<IActionResult> UpdatePermitPrice([FromBody] PriceUpdateRequest permit)
+   {
+      var permitToUpdate = await context.PermitFees.FindAsync(permit.Id);
+      
+      if (permitToUpdate == null)
+      {
+         return BadRequest(new { Errors = new List<string> { "Permit not found" } });
+      }
+
+      permitToUpdate.Price= permit.Price;
+      context.PermitFees.Update(permitToUpdate);
       await context.SaveChangesAsync();
       
       return Ok(new { Success = true });

@@ -22,7 +22,7 @@ public class MaterialsController(ApplicationDbContext dbContext) : ControllerBas
      
      [HttpPatch]
      [Route("updateMaterialPrice")]
-     public async Task<IActionResult> UpdateMaterialPrice([FromBody] MaterialPriceUpdateRequest material)
+     public async Task<IActionResult> UpdateMaterialPrice([FromBody] PriceUpdateRequest material)
      {
          var materialToUpdate = await dbContext.Materials.FindAsync(material.Id);
          

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RoofEstimation.DAL;
+using RoofEstimation.Models.Enums;
 using RoofEstimation.Models.Prices;
 
 namespace RoofEstimation.Api.Controllers.Admin.Prices;
@@ -19,6 +20,68 @@ public class GuttersAndPermitController(ApplicationDbContext context) : Controll
       return Ok(gutters);
    }
    
+   [HttpGet("getGuttersAndPermits")]
+   public async Task<IActionResult> GetGuttersAndPermits()
+   {
+      var gutters = await context.Gutters.ToListAsync();
+      var permits = await context.PermitFees.ToListAsync();
+
+      var updatedGutters = gutters.Select(x => new
+      {
+            Id = x.Id,
+            Name = x.Name,
+            Units = x.Units,
+            Price = x.Price,
+            Total = x.Total,
+            Profit = x.Profit,
+            MyProfit = x.MyProfit,
+            Type = x.Id == 1 ? GuttersAndFeesType.Gutters : GuttersAndFeesType.Downspouts
+      });
+      
+      var updatedPermits = permits.Select(x => new
+      { 
+            Id = x.Id,
+            Price = x.Price,
+            Type = GuttersAndFeesType.PermitFees
+      });
+
+      return Ok(new { Gutters = updatedGutters, Permits = updatedPermits });
+   }
+   
+   [HttpPatch("updateGuttersAndPermits")]
+   public async Task<IActionResult> UpdateGuttersAndPermits([FromBody] PriceUpdateRequest priceUpdateRequest)
+   {
+      if (priceUpdateRequest.Type == GuttersAndFeesType.PermitFees)
+      {
+         var permitToUpdate = await context.PermitFees.FindAsync(priceUpdateRequest.Id);
+         
+         if (permitToUpdate == null)
+         {
+            return BadRequest(new { Errors = new List<string> { "Permit not found" } });
+         }
+
+         permitToUpdate.Price = priceUpdateRequest.Price;
+         context.PermitFees.Update(permitToUpdate);
+      }
+      else
+      {
+         var gutterToUpdate = await context.Gutters.FindAsync(priceUpdateRequest.Id);
+      
+         if (gutterToUpdate == null)
+         {
+            return BadRequest(new { Errors = new List<string> { "Gutter not found" } });
+         }
+
+         gutterToUpdate.Price = priceUpdateRequest.Price;
+         context.Gutters.Update(gutterToUpdate);
+      }
+      
+      await context.SaveChangesAsync();
+      
+      return Ok(new { Success = true });
+   }
+   
+   
    [HttpPatch("updateGutterPrice")]
    public async Task<IActionResult> UpdateGutterPrice([FromBody] PriceUpdateRequest gutter)
    {
@@ -29,7 +92,7 @@ public class GuttersAndPermitController(ApplicationDbContext context) : Controll
          return BadRequest(new { Errors = new List<string> { "Gutter not found" } });
       }
 
-      gutterToUpdate.Price= gutter.Price;
+      gutterToUpdate.Price = gutter.Price;
       context.Gutters.Update(gutterToUpdate);
       await context.SaveChangesAsync();
       

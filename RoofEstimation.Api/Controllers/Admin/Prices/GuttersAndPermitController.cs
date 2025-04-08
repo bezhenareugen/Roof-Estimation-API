@@ -42,6 +42,7 @@ public class GuttersAndPermitController(ApplicationDbContext context) : Controll
       { 
             Id = x.Id,
             Price = x.Price,
+            Name = "Permit Fees",
             Type = GuttersAndFeesType.PermitFees
       });
 

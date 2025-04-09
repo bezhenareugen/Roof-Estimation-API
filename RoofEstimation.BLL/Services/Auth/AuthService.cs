@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RoofEstimation.BLL.Mappers.Auth;
+using RoofEstimation.BLL.Services.MailService;
 using RoofEstimation.DAL;
 using RoofEstimation.Entities;
 using RoofEstimation.Entities.Auth;
@@ -22,7 +23,8 @@ public class AuthService(
     UserManager<UserEntity> userManager,
     RoleManager<IdentityRole> roleManager,
     IOptionsMonitor<JwtConfig> optionsMonitor,
-    ApplicationDbContext context)
+    ApplicationDbContext context,
+    IMailService mailService)
     : IAuthService
 {
     private readonly JwtConfig _jwtConfig = optionsMonitor.CurrentValue;
@@ -74,7 +76,14 @@ public class AuthService(
             context.OldPasswords.Add(oldPasswordEntity);
             await context.SaveChangesAsync();
             
-            return await GenerateJwtToken(newUser);
+            var result = await GenerateJwtToken(newUser);
+
+            if (result.Success)
+            {
+                await mailService.SendEmailAsync(newUser.Email, "Welcome to RoofEst", "Welcome to RoofEst", newUser, null);
+            }
+
+            return result;
         }
 
         return new AuthResultBase

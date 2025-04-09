@@ -1,0 +1,87 @@
+namespace RoofEstimation.BLL.MailTemplates;
+
+public static class EmailTemplates
+{
+    public static readonly string WelcomeEmail = @"
+<!DOCTYPE html>
+<html lang=""en"">
+<head>
+  <meta charset=""UTF-8"" />
+  <meta name=""viewport"" content=""width=device-width, initial-scale=1.0""/>
+  <title>Welcome Email</title>
+</head>
+<body style=""margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f7fa;"">
+  <table width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""padding: 40px 0;"">
+    <tr>
+      <td align=""center"">
+        <table width=""600"" cellpadding=""0"" cellspacing=""0"" style=""background-color: #ffffff; border-radius: 12px; padding: 40px;"">
+          <tr>
+            <td align=""center"" style=""padding-bottom: 20px;"">
+              <!-- Logo SVG -->
+              <svg width=""72"" height=""72"" viewBox=""0 0 72 72"" fill=""none"" xmlns=""http://www.w3.org/2000/svg"">
+                <path d=""M34.2126 14.0805C35.2089 13.1157 36.7911 13.1157 37.7874 14.0805L62.8271 38.329C63.5768 39.055 64 40.054 64 41.0976V59.6506L56.7742 52.6531V40.7495C56.7742 40.04 56.199 39.4648 55.4895 39.4648H50.8331C50.1236 39.4648 49.5484 40.04 49.5484 40.7495V45.6556L37.7874 34.2663C36.7911 33.3015 35.2089 33.3015 34.2126 34.2663L8 59.6506V41.0976C8 40.054 8.42322 39.055 9.17292 38.329L34.2126 14.0805Z"" fill=""#1A56DB""/>
+              </svg>
+              <h2 style=""margin: 16px 0 0 0; font-size: 20px; font-weight: bold;"">RoofEst</h2>
+              <p style=""font-size: 12px; color: #666;"">ESTIMATE YOUR OWN ROOF</p>
+            </td>
+          </tr>
+          <tr>
+            <td align=""center"" style=""padding: 20px 0;"">
+              <h1 style=""font-size: 24px; margin: 0;"">Welcome on board!<br />Let’s get started.</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style=""padding: 20px; color: #333; font-size: 14px; line-height: 1.6;"">
+              <p>Hello {{ Name }},</p>
+              <p>
+                We’re excited to introduce new updates designed to enhance your experience and improve overall performance.
+              </p>
+              <p>
+                Starting today, we’re rolling out streamlined terms and policies to ensure clarity and consistency across all our services. These updates will apply to any new subscriptions, renewals, and upgrades, with full adoption for existing accounts in 30 days.
+              </p>
+              <div style=""text-align: center; margin: 30px 0;"">
+                <a href=""#"" style=""background-color: #1A56DB; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;"">
+                  Button text
+                </a>
+              </div>
+              <p>
+                Our goal is to make it easier for you to navigate and manage your subscription. You can find detailed information and an FAQ on our website.
+              </p>
+              <p>Let us know if you have any questions!</p>
+            </td>
+          </tr>
+          <tr>
+            <td style=""font-size: 10px; color: #999; text-align: center; padding-top: 30px; border-top: 1px solid #eee;"">
+              White River Roofing will furnish all materials and labor in order to reroof the roof of this property in a professional manner using standard practices and top quality material. Replacement of metal pipe flashings, paint new metal, and installation of new roof dormer vents per city code is free of charge!
+            </td>
+          </tr>
+        </table>
+
+        <!-- Footer -->
+        <table width=""600"" cellpadding=""0"" cellspacing=""0"" style=""margin-top: 12px;"">
+          <tr>
+            <td style=""background-color: #1A56DB; color: #fff; text-align: center; padding: 10px 0; font-size: 12px; border-radius: 0 0 12px 12px;"">
+              KEEPING YOU DRY SINCE 1992 · <strong>CA LIC #1007021</strong>
+            </td>
+          </tr>
+        </table>
+
+        <table width=""600"" cellpadding=""0"" cellspacing=""0"" style=""margin-top: 16px; color: #666; font-size: 12px; text-align: center;"">
+          <tr>
+            <td>
+              <strong>RoofEst</strong><br />
+              White River Roofing, Inc<br />
+              1342 Ascote Ave<br />
+              Sacramento, CA 95673<br />
+              (916) 813-ROOF (7663)
+            </td>
+          </tr>
+        </table>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+";
+}

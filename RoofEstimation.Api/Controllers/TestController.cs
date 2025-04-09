@@ -4,17 +4,20 @@ using Minio;
 using Minio.DataModel.Args;
 using RoofEstimation.DAL;
 using System.IO;
+using Microsoft.AspNetCore.Identity;
+using RoofEstimation.BLL.Services.MailService;
 using RoofEstimation.BLL.Services.MinioService;
 using RoofEstimation.BLL.Services.PdfService;
+using RoofEstimation.Entities.Auth;
 
 namespace RoofEstimation.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TestController(ApplicationDbContext context, IMinioService minioService, IPdfService pdfService) : ControllerBase
+public class TestController(ApplicationDbContext context, IMinioService minioService, IPdfService pdfService, IMailService mailService, IWebHostEnvironment env, UserManager<UserEntity> userManager) : ControllerBase
 {
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
         var test = context.Users.FirstOrDefault();
 
@@ -32,6 +35,14 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
             Console.WriteLine($"Stack Trace: {e.StackTrace}");
             throw;
         }
+        
+        var templatePath = Path.Combine(env.ContentRootPath, "EmailTemplates", "WelcomeEmailTemplate.html");
+        var htmlTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
+        
+        var userId  = userManager.GetUserId(User);
+        var user = await userManager.FindByEmailAsync(userId);
+        
+        await mailService.SendEmailAsync("eugenbezhenar@gmail.com", "Welcome to RoofEst", htmlTemplate, user!, null);
 
         return Ok("WebHoos Works");
     }

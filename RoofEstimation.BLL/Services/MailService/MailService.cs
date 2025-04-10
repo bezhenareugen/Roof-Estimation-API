@@ -20,7 +20,7 @@ public class MailService(IConfiguration configuration) : IMailService
         email.To.Add(new MailboxAddress("", toEmail));
         email.Subject = subject;
         
-        var htmlBody = EmailTemplates.WelcomeEmail.Replace("{{ Name }}", $"{user.FirstName} {user.LastName}");
+        var htmlBody = EmailTemplates.NewWelcomeEmail.Replace("{{Name}}", $"{user.FirstName} {user.LastName}");
 
         var bodyBuilder = new BodyBuilder
         {

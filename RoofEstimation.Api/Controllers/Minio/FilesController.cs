@@ -14,4 +14,11 @@ public class FilesController(IMinioService minioService) : ControllerBase
      {
          return Ok(await minioService.GetUserEstimationsAsync(User));
      }
+     
+     [HttpGet("getLogo")]
+     public async Task<IActionResult> GetLogo()
+     {
+         var base64Png = await minioService.GetLogoAsSvg("testbucket", "Logotype.png");
+         return Content(base64Png, "text/plain");
+     }
 }

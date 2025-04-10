@@ -84,7 +84,6 @@ public class MinioService(IMinioClientFactory minioClientFactory, UserManager<Us
           var response = new List<EstimationFile>();
           var prefix = $"users/{userId}/";
           
-          
           try
           {
                Console.WriteLine("Started estimations request to MiniO");
@@ -114,5 +113,30 @@ public class MinioService(IMinioClientFactory minioClientFactory, UserManager<Us
           }
 
           return response;
+     }
+     
+     public async Task<string> GetLogoAsSvg(string bucketName, string objectName, CancellationToken cancellationToken = default)
+     {
+          try
+          {
+               using (var memoryStream = new MemoryStream())
+               {
+                    var args = new GetObjectArgs()
+                         .WithBucket(bucketName)
+                         .WithObject(objectName)
+                         .WithCallbackStream(stream => stream.CopyToAsync(memoryStream, cancellationToken));
+
+                    await _minioClient.GetObjectAsync(args, cancellationToken);
+
+                    // Convert the memory stream to a base64 string
+                    var base64Png = Convert.ToBase64String(memoryStream.ToArray());
+                    return base64Png;
+               }
+          }
+          catch (Exception ex)
+          {
+               Console.WriteLine($"Error fetching logo: {ex.Message}");
+               throw;
+          }
      }
 }

@@ -56,8 +56,8 @@ public class AuthService(
             await roleManager.CreateAsync(role);
         }
 
-        //var userRole = userRegisterRequest.UserType == UserType.Client ? "Client" : "Company";
-        var userRole = "Admin";
+        var userRole = userRegisterRequest.UserType == UserType.Client ? "Client" : "Company";
+        //var userRole = "Admin";
         var newUser = UserRegisterReqToUserEntityMapper.MapToUserEntity(userRegisterRequest);
         var isCreated = await userManager.CreateAsync(newUser, userRegisterRequest.Password);
 

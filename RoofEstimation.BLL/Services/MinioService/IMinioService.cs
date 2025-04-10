@@ -10,4 +10,6 @@ public interface IMinioService
 
     Task<bool> UploadEstimation(ClaimsPrincipal user);
     Task<List<EstimationFile>> GetUserEstimationsAsync(ClaimsPrincipal user);
+
+    Task<string> GetLogoAsSvg(string bucketName, string objectName, CancellationToken cancellationToken = default);
 }

@@ -17,6 +17,7 @@ namespace RoofEstimation.Api.Controllers;
 public class TestController(ApplicationDbContext context, IMinioService minioService, IPdfService pdfService, IMailService mailService, IWebHostEnvironment env, UserManager<UserEntity> userManager) : ControllerBase
 {
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> Index()
     {
         var test = context.Users.FirstOrDefault();
@@ -42,7 +43,7 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
         var userId  = userManager.GetUserId(User);
         var user = await userManager.FindByEmailAsync(userId);
         
-        await mailService.SendEmailAsync("eugenbezhenar@gmail.com", "Welcome to RoofEst", htmlTemplate, user!, null);
+        await mailService.SendEmailAsync("eugenbejenar@icloud.com", "Welcome to RoofEst", htmlTemplate, user!, null);
 
         return Ok("WebHoos Works");
     }

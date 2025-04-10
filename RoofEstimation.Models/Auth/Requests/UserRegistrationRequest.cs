@@ -14,7 +14,6 @@ public class UserRegistrationRequest
     [RegularExpression(@"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$", ErrorMessage = "Password must be at least 8 characters long and contain at least one uppercase letter, one number, and one symbol.")]
     public string Password { get; set; }
     
-    [Required]
     public string CompanyName { get; set; }
 
     [Required]

@@ -37,13 +37,13 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
             throw;
         }
         
-        var templatePath = Path.Combine(env.ContentRootPath, "EmailTemplates", "WelcomeEmailTemplate.html");
-        var htmlTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
+        // var templatePath = Path.Combine(env.ContentRootPath, "EmailTemplates", "WelcomeEmailTemplate.html");
+        // var htmlTemplate = await System.IO.File.ReadAllTextAsync(templatePath);
         
         var userId  = userManager.GetUserId(User);
         var user = await userManager.FindByEmailAsync(userId);
         
-        await mailService.SendEmailAsync("eugenbejenar@icloud.com", "Welcome to RoofEst", htmlTemplate, user!, null);
+        await mailService.SendEmailAsync("eugenbejenar@icloud.com", "Welcome to RoofEst", "body", user!, null);
 
         return Ok("WebHoos Works");
     }

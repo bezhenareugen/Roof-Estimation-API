@@ -41,7 +41,7 @@ public class UserRegistrationRequest
     [Required]
     public CompanyType CompanyType { get; set; } 
     
-    public string CompanyName { get; set; }
+    public string? CompanyName { get; set; }
 
     public string? LicenseNumber { get; set; }
 }

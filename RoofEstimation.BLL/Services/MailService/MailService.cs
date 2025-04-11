@@ -1,33 +1,18 @@
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
-using RoofEstimation.BLL.MailTemplates;
-using RoofEstimation.Entities.Auth;
+using RoofEstimation.BLL.Services.MailService.Handlers;
+using RoofEstimation.Models.Emails;
 
 namespace RoofEstimation.BLL.Services.MailService;
 
-public class MailService(IConfiguration configuration) : IMailService
+public class MailService(IConfiguration configuration, EmailHandlerFactory emailHandlerFactory) : IMailService
 {
-
-    public async Task SendWelcomeEmail()
+    public async Task SendEmailAsync(SendEmail sendEmailParams)
     {
+        var handler = emailHandlerFactory.GetHandler(sendEmailParams.EmailType);
+        var email = await handler.CreateEmailAsync(sendEmailParams);
         
-    }
-    public async Task SendEmailAsync(string toEmail, string subject, string body, UserEntity user, byte[]? attachment)
-    {
-        var email = new MimeMessage();
-        email.From.Add(new MailboxAddress("Roof Estimation", configuration["EmailSettings:From"]));
-        email.To.Add(new MailboxAddress("", toEmail));
-        email.Subject = subject;
-        
-        var htmlBody = EmailTemplates.NewWelcomeEmail.Replace("{{Name}}", $"{user.FirstName} {user.LastName}");
-
-        var bodyBuilder = new BodyBuilder
-        {
-            HtmlBody = htmlBody
-        };
-        email.Body = bodyBuilder.ToMessageBody();
-
         using var smtpClient = new SmtpClient();
         try
         {

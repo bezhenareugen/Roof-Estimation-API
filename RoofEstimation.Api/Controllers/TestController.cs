@@ -9,6 +9,8 @@ using RoofEstimation.BLL.Services.MailService;
 using RoofEstimation.BLL.Services.MinioService;
 using RoofEstimation.BLL.Services.PdfService;
 using RoofEstimation.Entities.Auth;
+using RoofEstimation.Models.Emails;
+using RoofEstimation.Models.Enums;
 
 namespace RoofEstimation.Api.Controllers;
 
@@ -42,8 +44,17 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
         
         var userId  = userManager.GetUserId(User);
         var user = await userManager.FindByEmailAsync(userId);
+
+        var sendEmailParams = new SendEmail
+        {
+            ToName = "Tuzic Sharic",
+            ToEmailAddress = "cto@roof-est.com",
+            Subject = "Welcome to RoofEst",
+            Body = string.Empty,
+            EmailType = EmailType.WelcomeEmail,
+        };
         
-        await mailService.SendEmailAsync("eugenbejenar@icloud.com", "Welcome to RoofEst", "body", user!, null);
+        await mailService.SendEmailAsync(sendEmailParams);
 
         return Ok("WebHoos Works");
     }

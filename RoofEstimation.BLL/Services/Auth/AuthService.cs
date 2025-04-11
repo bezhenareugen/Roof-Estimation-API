@@ -14,6 +14,8 @@ using RoofEstimation.Entities.Enums;
 using RoofEstimation.Models.Auth;
 using RoofEstimation.Models.Auth.Requests;
 using RoofEstimation.Models.Configs;
+using RoofEstimation.Models.Emails;
+using RoofEstimation.Models.Enums;
 using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 using ResetPasswordRequest = RoofEstimation.Models.Auth.Requests.ResetPasswordRequest;
 
@@ -80,7 +82,15 @@ public class AuthService(
 
             if (result.Success)
             {
-                await mailService.SendEmailAsync(newUser.Email, "Welcome to RoofEst", "Welcome to RoofEst", newUser, null);
+                var sendEmailParams = new SendEmail
+                {
+                    ToName = $"{newUser.FirstName} {newUser.LastName}",
+                    ToEmailAddress = newUser.Email,
+                    Subject = "Welcome to RoofEst",
+                    Body = string.Empty,
+                    EmailType = EmailType.WelcomeEmail,
+                };
+                await mailService.SendEmailAsync(sendEmailParams);
             }
 
             return result;

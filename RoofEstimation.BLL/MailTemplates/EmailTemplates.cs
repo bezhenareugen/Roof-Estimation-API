@@ -198,7 +198,9 @@ public static class EmailTemplates
         <table align=""center"" role=""presentation"" cellspacing=""0"" cellpadding=""0"" border=""0"" width=""100%"" style=""margin: auto;"">
           <tr>
             <td valign=""middle"" class=""hero bg_white"" style=""padding-top: 48px; border-radius: 15px 15px 0px 0px;"">
-              <img src=""https://api.roof-est.com/api/files/getLogo"" alt="""" style=""width: 170px; max-width: 600px; height: auto; margin: auto; display: block;"">         
+              <svg width=""72"" height=""72"" viewBox=""0 0 72 72"" fill=""none"" xmlns=""http://www.w3.org/2000/svg"">
+                <path d=""M34.2126 14.0805C35.2089 13.1157 36.7911 13.1157 37.7874 14.0805L62.8271 38.329C63.5768 39.055 64 40.054 64 41.0976V59.6506L56.7742 52.6531V40.7495C56.7742 40.04 56.199 39.4648 55.4895 39.4648H50.8331C50.1236 39.4648 49.5484 40.04 49.5484 40.7495V45.6556L37.7874 34.2663C36.7911 33.3015 35.2089 33.3015 34.2126 34.2663L8 59.6506V41.0976C8 40.054 8.42322 39.055 9.17292 38.329L34.2126 14.0805Z"" fill=""#1A56DB""/>
+              </svg>         
             </td>
           </tr>
           <tr>

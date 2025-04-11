@@ -8,6 +8,7 @@ using RoofEstimation.BLL.Services.Auth;
 using RoofEstimation.BLL.Services.EstimationService;
 using RoofEstimation.BLL.Services.LaborService;
 using RoofEstimation.BLL.Services.MailService;
+using RoofEstimation.BLL.Services.MailService.Handlers;
 using RoofEstimation.BLL.Services.MaterialsService;
 using RoofEstimation.BLL.Services.MinioService;
 using RoofEstimation.BLL.Services.PdfService;
@@ -73,6 +74,9 @@ builder.Services.AddScoped<IMaterialService, MaterialService>();
 builder.Services.AddScoped<IEstimationService, EstimationService>();
 builder.Services.AddScoped<IMinioService, MinioService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
+builder.Services.AddScoped<WelcomeEmailHandler>();
+builder.Services.AddScoped<ResetPasswordEmilHandler>();
+builder.Services.AddScoped<EmailHandlerFactory>();
 builder.Services.AddScoped<IMailService, MailService>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";

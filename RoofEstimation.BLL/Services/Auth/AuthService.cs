@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RoofEstimation.BLL.MailTemplates;
 using RoofEstimation.BLL.Mappers.Auth;
 using RoofEstimation.BLL.Services.MailService;
 using RoofEstimation.DAL;
@@ -186,7 +187,18 @@ public class AuthService(
         // Send the serializedToken via email to the user
         // For example, using an email service
 
-        var resetUrl = $"http://localhost:5173/reset-password?token={serializedToken}";
+        var resetUrl = $"https://roof-est.com/reset-password?token={serializedToken}";
+        var body = EmailTemplates.ResetPasswordEmail;
+        body = body.Replace("{Name}", $"{user.FirstName} {user.LastName}");
+        var sendEmailParams = new SendEmail
+        {
+            ToName = $"{user.FirstName} {user.LastName}",
+            ToEmailAddress = user.Email,
+            Subject = "Reset Password",
+            Body = body.Replace("{{resetPasswordLink}}", resetUrl),
+            EmailType = EmailType.ResetPasswordEmail,
+        };
+        await mailService.SendEmailAsync(sendEmailParams);
 
         return resetUrl;
     }

@@ -106,6 +106,8 @@ namespace RoofEstimation.Api.Controllers.Auth;
             var token = await authService.GeneratePasswordResetTokenAsync(request.Email);
             // Here you would send the token via email to the user
             
+            
+            
             return token is not null ? Ok(new { ResetPasswordUrl = token }) : BadRequest("User not found");
         }
 

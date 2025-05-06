@@ -1,20 +1,8 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using RoofEstimation.BLL.Mappers.Auth;
 using RoofEstimation.BLL.Services.Auth;
-using RoofEstimation.DAL;
-using RoofEstimation.Entities.Auth;
-using RoofEstimation.Entities.Enums;
 using RoofEstimation.Models.Auth;
 using RoofEstimation.Models.Auth.Requests;
-using RoofEstimation.Models.Configs;
 
 namespace RoofEstimation.Api.Controllers.Auth;
 

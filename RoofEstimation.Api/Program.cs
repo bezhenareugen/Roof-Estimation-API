@@ -122,6 +122,16 @@ app.Use(async (context, next) =>
     }
 });
 
+app.Use(async (context, next) =>
+{
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 204; // No Content
+        return;
+    }
+    await next();
+});
+
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseStaticFiles();

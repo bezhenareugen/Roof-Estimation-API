@@ -111,6 +111,11 @@ if (app.Environment.IsDevelopment())
 }
 app.Use(async (context, next) =>
 {
+    if (context.Request.Method == "OPTIONS")
+    {
+        context.Response.StatusCode = 204; // No Content
+        return;
+    }
     await next();
 
     // Log response headers
@@ -120,16 +125,6 @@ app.Use(async (context, next) =>
     {
         Console.WriteLine($"{header.Key}: {header.Value}");
     }
-});
-
-app.Use(async (context, next) =>
-{
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 204; // No Content
-        return;
-    }
-    await next();
 });
 
 app.UseCors(MyAllowSpecificOrigins);

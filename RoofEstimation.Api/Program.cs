@@ -109,6 +109,18 @@ if (app.Environment.IsDevelopment())
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
 }
+app.Use(async (context, next) =>
+{
+    await next();
+
+    // Log response headers
+    var headers = context.Response.Headers;
+    Console.WriteLine("Response Headers:");
+    foreach (var header in headers)
+    {
+        Console.WriteLine($"{header.Key}: {header.Value}");
+    }
+});
 
 app.UseCors(MyAllowSpecificOrigins);
 

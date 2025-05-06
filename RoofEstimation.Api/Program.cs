@@ -83,13 +83,16 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy  =>
+        policy =>
         {
-            policy.WithOrigins("http://localhost:3000",
-                    "http://localhost:5173")
+            policy.WithOrigins(
+                    "http://localhost:3000",
+                    "http://localhost:5173",
+                    "https://roof-est.com" // Ensure this is included
+                )
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowCredentials(); // Required for cookies or authorization headers
         });
 });
 
@@ -105,9 +108,8 @@ if (app.Environment.IsDevelopment())
             .WithTitle("Roof Estimation API")
             .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
     });
-    
-    
 }
+
 app.UseCors(MyAllowSpecificOrigins);
 
 app.UseStaticFiles();

@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Minio;
 using RoofEstimation.BLL.Services.Auth;
 using RoofEstimation.BLL.Services.EstimationService;
+using RoofEstimation.BLL.Services.EstimationService.Calculation;
 using RoofEstimation.BLL.Services.LaborService;
 using RoofEstimation.BLL.Services.MailService;
 using RoofEstimation.BLL.Services.MailService.Handlers;
@@ -66,14 +67,24 @@ builder.Services.AddMinio(configureClient => configureClient
     .WithSSL(false)
     .Build());
 
+// Configure HttpClient for IPupetteerPdfService
+builder.Services.AddHttpClient<IPupetteerPdfService, PupetteerPdfService>(client =>
+{
+    // You can configure the HttpClient here, for example, setting a base address
+    // If your PDF service has a base URL, uncomment and adjust the line below:
+    // client.BaseAddress = new Uri("http://localhost:3897/api/pdf/"); 
+});
+
 //Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILaborService, LaborService>();
 builder.Services.AddScoped<ITearOffService, TearOffService>();
 builder.Services.AddScoped<IMaterialService, MaterialService>();
+builder.Services.AddScoped<IEstimationCalculationService, EstimationCalculationCalculationService>();
 builder.Services.AddScoped<IEstimationService, EstimationService>();
 builder.Services.AddScoped<IMinioService, MinioService>();
 builder.Services.AddScoped<IPdfService, PdfService>();
+builder.Services.AddScoped<IPupetteerPdfService, PupetteerPdfService>();
 builder.Services.AddScoped<WelcomeEmailHandler>();
 builder.Services.AddScoped<ResetPasswordEmilHandler>();
 builder.Services.AddScoped<EmailHandlerFactory>();

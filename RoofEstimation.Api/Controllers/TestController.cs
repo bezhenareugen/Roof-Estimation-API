@@ -16,7 +16,7 @@ namespace RoofEstimation.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TestController(ApplicationDbContext context, IMinioService minioService, IPdfService pdfService, IMailService mailService, IWebHostEnvironment env, UserManager<UserEntity> userManager) : ControllerBase
+public class TestController(ApplicationDbContext context, IMinioService minioService, IPdfService pdfService, IMailService mailService, IWebHostEnvironment env, UserManager<UserEntity> userManager, IPupetteerPdfService pupetteerPdfService) : ControllerBase
 {
     [HttpGet]
     [Authorize]
@@ -102,5 +102,20 @@ public class TestController(ApplicationDbContext context, IMinioService minioSer
         var response = await minioService.UploadEstimation(User);
 
         return response ? Ok(url) : BadRequest("File not saved");
+    }
+    
+    [HttpGet("pdf")]
+    public async Task<IActionResult> TestPdfPupetteer()
+    {
+        var pdfBytes = await pupetteerPdfService.GeneratePdfFromHtmlAsync(new EstimationData());
+
+        if (pdfBytes.Length > 0)
+        {
+            return File(pdfBytes, "application/pdf", "estimation.pdf"); // Return the PDF as a file
+        }
+        else
+        {
+            return StatusCode(500, "Failed to generate PDF."); // Handle the case where PDF generation fails
+        }
     }
 }

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roof Estimate</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .invoice-container {
+            max-width: 768px;
+            margin: 2rem auto;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .header-bg {
+            background-color: #111928;
+        }
+        .footer-bg {
+            background-color: #1A56DB;
+        }
+        .table-header {
+            background-color: #F4F6F8;
+            color: #374151;
+            font-weight: 600;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            text-align: left;
+        }
+        .table-row td {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            border-bottom-width: 1px;
+            border-color: #e5e7eb;
+        }
+        .table-row:last-child td {
+            border-bottom-width: 0;
+        }
+        .total-highlight {
+            background-color: #1A56DB;
+            color: white;
+        }
+        h1, h2, h3, h4, h5, h6, p, span, div, th, td, a, button, input, select, textarea {
+            font-family: 'Inter', sans-serif;
+        }
+        .date-expiration-bg {
+            background-color: #F4F6F8;
+        }
+        .description-item {
+
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="invoice-container">
+    <div class="header-bg text-white p-6 md:p-8 rounded-t-lg">
+        <div class="flex flex-col md:flex-row justify-between items-start">
+            <div class="mb-4 md:mb-0">
+                <img src="data:image/png;base64,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" alt="RoofEst Logo" class="h-10 md:h-14">
+                <p class="text-xs text-blue-300 mt-2">LIC #1007021</p>
+            </div>
+            <div class="text-right">
+                <p class="text-xs font-semibold">White River Roofing, Inc</p>
+                <p class="text-xs font-light">1342 Ascote Ave</p>
+                <p class="text-xs font-light">Sacramento, CA 95673</p>
+                <p class="text-xs font-light">(916) 813-ROOF (7663)</p>
+                <p class="text-xs font-light">info@whiteriverroofing.com</p>
+                <p class="text-xs font-light">www.whiteriverroofing.com</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-6 md:p-8">
+        <div class="flex flex-col md:flex-row justify-between items-start text-sm">
+            <div>
+                <h3 class="font-medium text-gray-700 mb-1 uppercase">PROPERTY ADDRESS:</h3>
+                <p class="text-gray-600">Sun Run</p>
+                <p class="text-gray-600">99 Oak Ave</p>
+                <p class="text-gray-600">S San Francisco CA 94080</p>
+            </div>
+            <div class="mt-4 md:mt-0 text-sm text-left md:text-right space-y-2">
+                <div class="date-expiration-bg px-3 py-2 rounded-md">
+                    <span class="font-semibold text-gray-800">Date</span>
+                    <span class="text-gray-700 ml-2">1/22/2025</span>
+                </div>
+                <div class="date-expiration-bg px-3 py-2 rounded-md">
+                    <span class="font-semibold text-gray-800">Expiration</span>
+                    <span class="text-gray-700 ml-2">2/5/2025</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-6 md:px-8 pb-6">
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead>
+                <tr>
+                    <th class="table-header rounded-tl-md rounded-bl-md uppercase">DATE</th>
+                    <th class="table-header uppercase">ACTIVITY</th>
+                    <th class="table-header text-right rounded-tr-md rounded-br-md uppercase">AMOUNT</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Tear-Off and Haul Away</td>
+                    <td class="text-right">$727</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Material Cost Duration Color: 0</td>
+                    <td class="text-right">$3,550.69</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Install Roof Material</td>
+                    <td class="text-right">$4,100</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Replace Metal Pipe Flashings- No Extra Cost</td>
+                    <td class="text-right">$0.00</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Paint New Metal Pipes and Flashings- No Extra Cost</td>
+                    <td class="text-right">$0.00</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Install Roof Dorner Vents (per city code)- No Extra Cost</td>
+                    <td class="text-right">$0.00</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Install Gutters and Downspouts-NOT including gutter guards</td>
+                    <td class="text-right">$273.00</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Dry Rot</td>
+                    <td class="text-right">$0.00</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Permit Fees</td>
+                    <td class="text-right">$550.00</td>
+                </tr>
+                <tr class="table-row">
+                    <td>01/22/2025</td>
+                    <td>Travel</td>
+                    <td class="text-right">$0.00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="p-6 md:p-8">
+        <div class="flex flex-col md:flex-row justify-between">
+            <div class="text-xs text-gray-600 mb-6 md:mb-0 md:w-3/5">
+                <p class="mb-2 font-medium text-gray-700">The following is a detailed description of work that will undergo for the re-roof of this property:</p>
+                <div class="mt-2 space-y-0.5 text-xs">
+                    <p class="description-item">-Tear off and haul away existing roof material-Install synthetic underlayment</p>
+                    <p class="description-item">-DeckDefense-Install Owens Corning Shingles</p>
+                    <p class="description-item">-Replace all pipe flashings</p>
+                    <p class="description-item">-Paint new metal pipes and flashings</p>
+                    <p class="description-item">-Install a 2-inch by 2-inch nosing on eave and gable edges</p>
+                    <p class="description-item">-Cut in and install new vents as per city code</p>
+                    <p class="description-item">-Tear off and install new gutters and downspouts</p>
+                    <p class="description-item">-Dry Rot Repair ($60 per man hr plus materials)</p>
+                </div>
+            </div>
+            <div class="md:w-2/5 md:pl-6">
+                <div class="space-y-1 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-700">Duration</span>
+                        <span class="font-semibold text-gray-800">$9,200.69</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-700">Woodcrest</span>
+                        <span class="font-semibold text-gray-800">$9,974.24</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-700">Woodmoor</span>
+                        <span class="font-semibold text-gray-800">$10,413.66</span>
+                    </div>
+                </div>
+                <div class="mt-4 total-highlight p-3 rounded-md flex justify-between items-center">
+                    <span class="text-lg font-bold uppercase">TOTAL:</span>
+                    <span class="text-xl font-bold">$9,200.69</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="px-12 md:px-20 py-8 text-xs text-gray-500 text-center">
+        <p>White River Roofing will furnish all materials and labor in order to reroof the roof of this property in a professional manner using standard practices and top quality material. Replacement of metal pipe flashings, paint new metal, and installation of new roof dormer vents per city code is free of charge!</p>
+    </div>
+
+    <div class="px-6 md:px-8 pt-4">
+        <div class="footer-bg text-white text-center py-3 rounded-t-lg text-xs font-semibold">
+            KEEPING YOU DRY SINCE 1992-CA LIC #1007021
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
